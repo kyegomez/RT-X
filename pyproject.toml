@@ -3,15 +3,15 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
-name = "paper"
-version = "0.0.1"
-description = "Paper - Pytorch"
+name = "rtx-torch"
+version = "0.0.2"
+description = "rtx - Pytorch"
 license = "MIT"
 authors = ["Kye Gomez <kye@apac.ai>"]
-homepage = "https://github.com/kyegomez/paper"
+homepage = "https://github.com/kyegomez/rt-x"
 documentation = ""  # Add this if you have documentation.
 readme = "README.md"  # Assuming you have a README.md
-repository = "https://github.com/kyegomez/paper"
+repository = "https://github.com/kyegomez/rtx"
 keywords = ["artificial intelligence", "deep learning", "optimizers", "Prompt Engineering"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -20,9 +20,17 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3.6"
 ]
+packages = [
+    { include = "rtx" },
+    { include = "rtx/**/*.py" },
+]
+
 
 [tool.poetry.dependencies]
 python = "^3.6"
+torch = "*"
+einops = "*"
+efficientnet_pytorch = "*"
 
 
 [tool.poetry.dev-dependencies]
