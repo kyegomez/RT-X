@@ -766,6 +766,7 @@ class RTX1(nn.Module):
         cond_drop_prob : float
             conditional drop probability for the RT1 model
         """
+        super().__init__()
 
         self.vit = MaxViT(
             num_classes=num_classes,
@@ -841,10 +842,19 @@ class RTX1(nn.Module):
         torch.Tensor
             a tensor containing the computed logits
         """
-        video = self.tfms(Image.open(video).convert("RGB").unsqueeze(0))
+        # Reshape video tensor back to include frames dimension
+        batch_size, channels, frames, height, width = video.shape
+        video = video.view(batch_size * frames, channels, height, width)
+
+        #extract features using efficientnet
         video = self.efficent_net.extract_features(video)
-        video = rearrange(video, "b c h w -> b h w c")
-        video = video.unsqueeze(0)
+
+        # Reshape video tensor back to include frames dimension
+        _, c, h, w = video.shape
+        video = video.view(batch_size, frames, c, h, w)
+
+        #average features across frames dimension
+        video = video.mean(dim=-1, keepdim=True)
 
         try:
             self.model.eval()
@@ -867,4 +877,5 @@ train_logits = model.train(video, instructions)
 model.model.eval()
 
 # compute the eval logits with a conditional scale of 3
-eval_logits = model.eval(video, instructions, cond_scale=3.0)
+eval_logits = model.run(video, instructions, cond_scale=3.0)
+print(eval_logits.shape)
