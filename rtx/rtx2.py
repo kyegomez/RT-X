@@ -112,5 +112,3 @@ class RTX2(torch.nn.Module):
         except Exception as error:
             print(f"Failed in forward method: {error}")
             raise
-
-
