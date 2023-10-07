@@ -31,6 +31,9 @@ python = "^3.6"
 torch = "*"
 einops = "*"
 efficientnet_pytorch = "*"
+zetascale = "*"
+torchvision = "*"
+
 
 
 [tool.poetry.dev-dependencies]
