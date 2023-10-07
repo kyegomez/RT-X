@@ -63,7 +63,6 @@ MIT
 
 
 # Todo
-
 - Integrate Efficient net with RT-1 and RT-2
 - create training script for both models
 - Provide a table of all the datasets

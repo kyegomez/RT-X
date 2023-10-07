@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "rtx-torch"
-version = "0.0.2"
+version = "0.0.4"
 description = "rtx - Pytorch"
 license = "MIT"
 authors = ["Kye Gomez <kye@apac.ai>"]

@@ -792,15 +792,6 @@ class RTX1(nn.Module):
         # init efficient net
         self.efficent_net = EfficientNet.from_pretrained("efficientnet-b0")
 
-        # preprocess image
-        self.tfms = transforms.Compose(
-            [
-                transforms.Resize(224),
-                transforms.ToTensor(),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-            ]
-        )
-
     def train(self, video, instructions):
         """
         Computes the logits for the given video and instructions using the RT1 model in training mode.
@@ -864,20 +855,3 @@ class RTX1(nn.Module):
             return eval_logits
         except Exception as e:
             raise RuntimeError("Error in evaluation: {}".format(e))
-
-
-model = RTX1()
-
-video = torch.randn(2, 3, 6, 224, 224)
-
-instructions = ["bring me that apple sitting on the table", "please pass the butter"]
-
-# compute the train logits
-train_logits = model.train(video, instructions)
-
-# set the model to evaluation mode
-model.model.eval()
-
-# compute the eval logits with a conditional scale of 3
-eval_logits = model.run(video, instructions, cond_scale=3.0)
-print(eval_logits.shape)
