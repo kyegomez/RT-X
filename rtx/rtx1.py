@@ -842,22 +842,24 @@ class RTX1(nn.Module):
         torch.Tensor
             a tensor containing the computed logits
         """
-        # Reshape video tensor back to include frames dimension
-        batch_size, channels, frames, height, width = video.shape
-        video = video.view(batch_size * frames, channels, height, width)
+        # # Reshape video tensor back to include frames dimension
+        # batch_size, channels, frames, height, width = video.shape
+        # video = video.view(batch_size * frames, channels, height, width)
 
-        #extract features using efficientnet
-        video = self.efficent_net.extract_features(video)
+        # # Extract features using EfficientNet
+        # video = self.efficent_net.extract_features(video)
 
-        # Reshape video tensor back to include frames dimension
-        _, c, h, w = video.shape
-        video = video.view(batch_size, frames, c, h, w)
+        # # Reshape video tensor back to include frames dimension
+        # _, c, h, w = video.shape
+        # video = video.view(batch_size, frames, c, h, w)
 
-        #average features across frames dimension
-        video = video.mean(dim=-1, keepdim=True)
+        # # Average features across frames dimension and add an extra dimension
+        # video = video.mean(dim=-1, keepdim=True)
+        # video = video[:, :3, :, :]
 
         try:
             self.model.eval()
+            # shape => 2, 3, 6, 224, 224
             eval_logits = self.model(video, instructions, cond_scale=cond_scale)
             return eval_logits
         except Exception as e:
