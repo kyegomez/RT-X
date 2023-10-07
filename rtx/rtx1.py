@@ -841,9 +841,7 @@ class RTX1(nn.Module):
         torch.Tensor
             a tensor containing the computed logits
         """
-        video = self.tfms(
-            Image.open(video).convert("RGB").unsqueeze(0)
-        )
+        video = self.tfms(Image.open(video).convert("RGB").unsqueeze(0))
         video = self.efficent_net.extract_features(video)
         video = rearrange(video, "b c h w -> b h w c")
         video = video.unsqueeze(0)
@@ -856,15 +854,11 @@ class RTX1(nn.Module):
             raise RuntimeError("Error in evaluation: {}".format(e))
 
 
-
 model = RTX1()
 
 video = torch.randn(2, 3, 6, 224, 224)
 
-instructions = [
-    'bring me that apple sitting on the table',
-    'please pass the butter'
-]
+instructions = ["bring me that apple sitting on the table", "please pass the butter"]
 
 # compute the train logits
 train_logits = model.train(video, instructions)
@@ -873,4 +867,4 @@ train_logits = model.train(video, instructions)
 model.model.eval()
 
 # compute the eval logits with a conditional scale of 3
-eval_logits = model.eval(video, instructions, cond_scale=3.)
+eval_logits = model.eval(video, instructions, cond_scale=3.0)
