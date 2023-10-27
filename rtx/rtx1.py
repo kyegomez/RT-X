@@ -1,23 +1,17 @@
 import torch
 import torch.nn.functional as F
 from torch import nn, einsum
-from PIL import Image
 from typing import List, Optional, Callable, Tuple
 from beartype import beartype
 
 from einops import pack, unpack, repeat, reduce, rearrange
 from einops.layers.torch import Rearrange, Reduce
 
-from functools import partial
 from classifier_free_guidance_pytorch import (
     TextConditioner,
     AttentionTextConditioner,
     classifier_free_guidance,
 )
-
-from efficientnet_pytorch import EfficientNet
-
-from torchvision import transforms
 
 
 # helpers
@@ -447,7 +441,7 @@ class TransformerAttention(nn.Module):
         attn_mask=None,
         cond_fn: Optional[Callable] = None,
     ):
-        b = x.shape[0]
+        x.shape[0]
 
         if exists(context):
             context = self.context_norm(context)
@@ -790,7 +784,7 @@ class RTX1(nn.Module):
         )
 
         # init efficient net
-        self.efficent_net = EfficientNet.from_pretrained("efficientnet-b0")
+        # self.efficent_net = EfficientNet.from_pretrained("efficientnet-b0")
 
     def train(self, video, instructions):
         """

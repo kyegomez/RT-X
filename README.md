@@ -42,7 +42,7 @@ eval_logits = model.run(video, instructions, cond_scale=3.0)
 print(eval_logits.shape)
 ```
 
-- RTX-2 takes in images and text and interleaves them to form multi-modal sentences:
+- RTX-2 takes in images and text and interleaves them to form multi-modal sentences and outputs text tokens not a 7 dimensional vector of x,y,z,roll,pitch,yaw,and gripper
 ```python
 
 import torch
