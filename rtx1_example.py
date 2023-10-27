@@ -1,5 +1,5 @@
 import torch
-from rtx.rtx1 import RTX1
+from rtx import RTX1
 
 model = RTX1()
 

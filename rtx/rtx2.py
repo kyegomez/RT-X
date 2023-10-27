@@ -1,7 +1,7 @@
 #!pip install torch zetascale
 
 import torch
-from zeta.nn.architecture import (
+from zeta.structs import (
     AutoregressiveWrapper,
     Decoder,
     Encoder,
