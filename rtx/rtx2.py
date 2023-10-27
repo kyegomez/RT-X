@@ -1,5 +1,3 @@
-#!pip install torch zetascale
-
 import torch
 from zeta.structs import (
     AutoregressiveWrapper,

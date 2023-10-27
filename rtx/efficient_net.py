@@ -1,6 +1,5 @@
 import torch
 from torch import nn
-from torch.nn import functional as F
 
 
 def _round_filters(filters, width_mult):
@@ -41,6 +40,35 @@ class ConvBNReLU(nn.Sequential):
 
 
 class SqueezeExcitation(nn.Module):
+    """
+    Squeeze-and-Excitation block.
+
+    Parameters
+    ---------
+    in_planes : int
+        the number of input channels
+    reduced_dim : int
+        the number of channels after the first convolution
+
+    Attributes
+    ----------
+    se : nn.Sequential
+        the sequential layers of the Squeeze-and-Excitation block
+    
+    Methods
+    -------
+    forward(x)
+
+    Example:
+    --------
+    >>> x = torch.randn(1, 3, 256, 256)
+    >>> model = SqueezeExcitation(3, 1)
+    >>> output = model(x)
+    >>> print(output.shape)
+    
+    
+    
+    """
     def __init__(self, in_planes, reduced_dim):
         super(SqueezeExcitation, self).__init__()
         self.se = nn.Sequential(
@@ -52,6 +80,7 @@ class SqueezeExcitation(nn.Module):
         )
 
     def forward(self, x):
+        """Forward pass for the Squeeze-and-Excitation block."""
         return x * self.se(x)
 
 
@@ -98,6 +127,34 @@ class MBConv(nn.Module):
 
 
 class EfficientNet(nn.Module):
+    """
+    EfficientNet model.
+
+    Parameters
+    ----------
+    width_mult : float
+        the width multiplier    
+    
+    Attributes
+    ----------
+    features : nn.Sequential
+        the sequential layers of the model
+    avgpool : nn.AdaptiveAvgPool2d
+        the adaptive average pooling layer
+    classifier : nn.Linear
+        the linear layer
+    
+    Methods
+    -------
+    forward(x)
+
+    Example: 
+    >>> x = torch.randn(1, 3, 256, 256)
+    >>> model = EfficientNet()
+    >>> output = model(x)
+    >>> print(output.shape)
+    
+    """
     def __init__(self, width_mult=1.0):
         super(EfficientNet, self).__init__()
         # scale dimensions
