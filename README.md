@@ -90,6 +90,7 @@ year = {2023},
 ```
 
 # Todo
-- Integrate Efficient net with RT-1 and RT-2
-- create training script for both models
-- Provide a table of all the datasets
+- Integrate EfficientNetFilm with RTX-1
+- Create training script for RTX-1 by unrolling observations and do basic cross entropy in first rt-1
+- Use RTX-2 dataset on huggingface
+- [Check out the project board for more tasks](https://github.com/users/kyegomez/projects/10/views/1)
