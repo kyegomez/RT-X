@@ -18,7 +18,11 @@ Here we implement both model architectures, RTX-1 and RTX-2
 `pip install rtx-torch `
 
 # Usage
+
+## RTX1
 - RTX1 Usage takes in text and videos
+- Does not use Efficient Net yet, we're integrating it now then the implementation will be complete
+- Uses SOTA transformer architecture
 
 ```python
 
@@ -42,6 +46,8 @@ eval_logits = model.run(video, instructions, cond_scale=3.0)
 print(eval_logits.shape)
 ```
 
+
+## RTX-2
 - RTX-2 takes in images and text and interleaves them to form multi-modal sentences and outputs text tokens not a 7 dimensional vector of x,y,z,roll,pitch,yaw,and gripper
 ```python
 
@@ -55,6 +61,17 @@ text = torch.randint(0, 20000, (1, 1024))
 model = RTX2()
 output = model(img, text)
 print(output)
+
+```
+
+## EfficientNetFilm
+- Extracts the feature from the given image
+```python
+from rtx import EfficientNetFilm
+
+model = EfficientNetFilm("efficientnet-b0", 10)
+
+out = model("img.jpeg")
 
 
 ```
