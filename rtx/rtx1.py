@@ -707,6 +707,58 @@ class RTX1(nn.Module):
         Computes the logits for the given video and instructions using the RT1 model in training mode.
     eval(video, instructions, cond_scale=1.0):
         Computes the logits for the given video and instructions using the RT1 model in evaluation mode.
+
+    Parameters
+    ----------
+    num_classes : int
+        number of classes for the ViT model
+    dim : int
+        dimension of the ViT model
+    dim_conv_stem : int
+        dimension of the convolutional stem for the ViT model
+    dim_head_vit : int
+        dimension of the head for the ViT model
+    depth_vit : tuple
+        depth of the ViT model
+    window_size : int
+        window size for the ViT model
+    mbconv_expansion_rate : float
+        expansion rate for the mbconv layer in the ViT model
+    mbconv_shrinkage_rate : float
+        shrinkage rate for the mbconv layer in the ViT model
+    dropout_vit : float
+        dropout rate for the ViT model
+    num_actions : int
+        number of actions for the RT1 model
+    depth_rt1 : int
+        depth of the RT1 model
+    heads : int
+        number of heads for the RT1 model
+    dim_head_rt1 : int
+        dimension of the head for the RT1 model
+    cond_drop_prob : float
+        conditional drop probability for the RT1 model
+
+    Examples
+    import torch
+    from rtx import RTX1
+
+    model = RTX1()
+
+    video = torch.randn(2, 3, 6, 224, 224)
+
+    instructions = ["bring me that apple sitting on the table", "please pass the butter"]
+
+    # compute the train logits
+    train_logits = model.train(video, instructions)
+
+    # set the model to evaluation mode
+    model.model.eval()
+
+    # compute the eval logits with a conditional scale of 3
+    eval_logits = model.run(video, instructions, cond_scale=3.0)
+    print(eval_logits.shape)
+
     """
 
     def __init__(
@@ -726,40 +778,6 @@ class RTX1(nn.Module):
         dim_head_rt1=64,
         cond_drop_prob=0.2,
     ):
-        """
-        Constructs all the necessary attributes for the RTX1 object.
-
-        Parameters
-        ----------
-        num_classes : int
-            number of classes for the ViT model
-        dim : int
-            dimension of the ViT model
-        dim_conv_stem : int
-            dimension of the convolutional stem for the ViT model
-        dim_head_vit : int
-            dimension of the head for the ViT model
-        depth_vit : tuple
-            depth of the ViT model
-        window_size : int
-            window size for the ViT model
-        mbconv_expansion_rate : float
-            expansion rate for the mbconv layer in the ViT model
-        mbconv_shrinkage_rate : float
-            shrinkage rate for the mbconv layer in the ViT model
-        dropout_vit : float
-            dropout rate for the ViT model
-        num_actions : int
-            number of actions for the RT1 model
-        depth_rt1 : int
-            depth of the RT1 model
-        heads : int
-            number of heads for the RT1 model
-        dim_head_rt1 : int
-            dimension of the head for the RT1 model
-        cond_drop_prob : float
-            conditional drop probability for the RT1 model
-        """
         super().__init__()
 
         self.vit = MaxViT(

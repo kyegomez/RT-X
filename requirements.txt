@@ -1,0 +1,4 @@
+torch
+einops
+efficientnet_pytorch
+torchvision
