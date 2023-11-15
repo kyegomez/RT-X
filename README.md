@@ -76,6 +76,11 @@ out = model("img.jpeg")
 
 ```
 
+
+# Tests
+I created a single tests file that uses pytest to run tests on all the modules, RTX1, RTX2, EfficientNetFil, first git clone and get into the repository 
+`pytest tests.py`
+
 # License
 MIT
 
