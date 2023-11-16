@@ -3,4 +3,4 @@ einops
 efficientnet_pytorch
 torchvision
 pytest
-zetascale
+zetascale==0.8.3
