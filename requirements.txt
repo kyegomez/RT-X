@@ -3,3 +3,4 @@ einops
 efficientnet_pytorch
 torchvision
 pytest
+zetascale
