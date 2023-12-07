@@ -1,8 +1,8 @@
 import torch
-from rtx import RTX1
+from rtx.rtx1 import RTX1, ViTConfig
 
 def run():
-    model = RTX1()
+    model = RTX1(ViTConfig(pretrained=True))
 
     video = torch.randn(2, 3, 6, 224, 224)
 

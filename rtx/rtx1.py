@@ -3,7 +3,7 @@ import torch.nn.functional as F
 from torch import nn, einsum
 from typing import List, Optional, Callable, Tuple
 from beartype import beartype
-
+import torchvision
 from einops import pack, unpack, repeat, reduce, rearrange
 from einops.layers.torch import Rearrange, Reduce
 
@@ -561,7 +561,7 @@ class RT1(nn.Module):
     def __init__(
         self,
         *,
-        vit: MaxViT,
+        vit: MaxViT | torchvision.models.MaxVit,
         num_actions=11,
         action_bins=256,
         depth=6,
@@ -576,7 +576,8 @@ class RT1(nn.Module):
     ):
         super().__init__()
         self.vit = vit
-
+        print(vit)
+        exit()
         self.num_vit_stages = len(vit.cond_hidden_dims)
 
         conditioner_klass = (
@@ -789,12 +790,12 @@ class RTX1(nn.Module):
         super().__init__()
         if vit_config is None:
             self.vit = MaxViT(**vars(ViTConfig()))
-        else:
+        elif not vit_config.pretrained:
             self.vit = MaxViT(**vars(vit_config))
-        # else:
-        #     # Load pretrained pytorch vit
-        #     from torchvision.models import maxvit_t, MaxVit_T_Weights
-        #     self.vit = maxvit_t(MaxVit_T_Weights.DEFAULT) 
+        else:
+            # Import pretrained vit model locally to avoid unnecessary download. 
+            from torchvision.models import maxvit_t, MaxVit_T_Weights
+            self.vit = maxvit_t(weights=MaxVit_T_Weights.DEFAULT) 
             
 
         self.model = RT1(
