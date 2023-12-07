@@ -9,7 +9,7 @@ description = "rtx - Pytorch"
 license = "MIT"
 authors = ["Kye Gomez <kye@apac.ai>"]
 homepage = "https://github.com/kyegomez/rt-x"
-documentation = ""  # Add this if you have documentation.
+documentation = "https://github.com/kyegomez/rt-x"  # Replace if you have documentation.
 readme = "README.md"  # Assuming you have a README.md
 repository = "https://github.com/kyegomez/rtx"
 keywords = ["artificial intelligence", "deep learning", "optimizers", "Prompt Engineering"]
@@ -27,7 +27,7 @@ packages = [
 
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.8"
 torch = "*"
 einops = "*"
 efficientnet_pytorch = "*"
