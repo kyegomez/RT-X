@@ -278,12 +278,14 @@ class MaxViT(nn.Module):
         mbconv_expansion_rate=4,
         mbconv_shrinkage_rate=0.25,
         dropout=0.1,
-        channels=3
+        channels=3,
+        pretrained=False,
     ):
         super().__init__()
         assert isinstance(
             depth, tuple
         ), "depth needs to be tuple if integers indicating number of transformer blocks at that stage"
+        assert not pretrained, "pretrained not supported yet"
 
         # convolutional stem
 
@@ -688,6 +690,56 @@ class RT1(nn.Module):
         return logits
 
 
+class ViTConfig:
+    ''' Configuration class to store the configuration of a `MaxViT`.
+    '''
+    def __init__(
+        self,
+        num_classes=1000,
+        dim=96,
+        dim_conv_stem=64,
+        dim_head=32,
+        depth=(2, 2, 5, 2),
+        window_size=7,
+        mbconv_expansion_rate=4,
+        mbconv_shrinkage_rate=0.25,
+        dropout=0.1,
+        pretrained=False,
+    ):
+        '''
+        Parameters
+        ----------
+        num_classes : int
+            number of classes for the ViT model
+        dim : int
+            dimension of the ViT model
+        dim_conv_stem : int
+            dimension of the convolutional stem for the ViT model
+        dim_head : int
+            dimension of the head for the ViT model
+        depth : tuple
+            depth of the ViT model
+        window_size : int
+            window size for the ViT model
+        mbconv_expansion_rate : float
+            expansion rate for the mbconv layer in the ViT model
+        mbconv_shrinkage_rate : float
+            shrinkage rate for the mbconv layer in the ViT model
+        dropout : float
+            dropout rate for the ViT model
+        pretrained : bool
+        '''
+        self.num_classes = num_classes
+        self.dim = dim
+        self.depth = depth
+        self.dim_head = dim_head
+        self.dim_conv_stem = dim_conv_stem
+        self.window_size = window_size
+        self.mbconv_expansion_rate = mbconv_expansion_rate
+        self.mbconv_shrinkage_rate = mbconv_shrinkage_rate
+        self.dropout = dropout
+        self.pretrained = pretrained
+
 class RTX1(nn.Module):
     """
     A class for real-time video processing using Vision Transformers (ViT) and Reinforcement Learning (RT1) models.
@@ -711,44 +763,18 @@ class RTX1(nn.Module):
 
     def __init__(
         self,
-        num_classes=1000,
-        dim=96,
-        dim_conv_stem=64,
-        dim_head_vit=32,
-        depth_vit=(2, 2, 5, 2),
-        window_size=7,
-        mbconv_expansion_rate=4,
-        mbconv_shrinkage_rate=0.25,
-        dropout_vit=0.1,
-        num_actions=11,
-        depth_rt1=6,
-        heads=8,
-        dim_head_rt1=64,
-        cond_drop_prob=0.2,
+        vit_config: ViTConfig = None,
+        num_actions: int=11,
+        depth_rt1: int=6,
+        heads: int =8,
+        dim_head_rt1: int=64,
+        cond_drop_prob: int=0.2,
     ):
         """
         Constructs all the necessary attributes for the RTX1 object.
 
         Parameters
         ----------
-        num_classes : int
-            number of classes for the ViT model
-        dim : int
-            dimension of the ViT model
-        dim_conv_stem : int
-            dimension of the convolutional stem for the ViT model
-        dim_head_vit : int
-            dimension of the head for the ViT model
-        depth_vit : tuple
-            depth of the ViT model
-        window_size : int
-            window size for the ViT model
-        mbconv_expansion_rate : float
-            expansion rate for the mbconv layer in the ViT model
-        mbconv_shrinkage_rate : float
-            shrinkage rate for the mbconv layer in the ViT model
-        dropout_vit : float
-            dropout rate for the ViT model
         num_actions : int
             number of actions for the RT1 model
         depth_rt1 : int
@@ -761,18 +787,15 @@ class RTX1(nn.Module):
             conditional drop probability for the RT1 model
         """
         super().__init__()
-
-        self.vit = MaxViT(
-            num_classes=num_classes,
-            dim=dim,
-            dim_conv_stem=dim_conv_stem,
-            dim_head=dim_head_vit,
-            depth=depth_vit,
-            window_size=window_size,
-            mbconv_expansion_rate=mbconv_expansion_rate,
-            mbconv_shrinkage_rate=mbconv_shrinkage_rate,
-            dropout=dropout_vit,
-        )
+        if vit_config is None:
+            self.vit = MaxViT(**vars(ViTConfig()))
+        else:
+            self.vit = MaxViT(**vars(vit_config))
+        # else:
+        #     # Load pretrained pytorch vit
+        #     from torchvision.models import maxvit_t, MaxVit_T_Weights
+        #     self.vit = maxvit_t(MaxVit_T_Weights.DEFAULT) 
+            
 
         self.model = RT1(
             vit=self.vit,
@@ -782,9 +805,6 @@ class RTX1(nn.Module):
             dim_head=dim_head_rt1,
             cond_drop_prob=cond_drop_prob,
         )
-
-        # init efficient net
-        # self.efficent_net = EfficientNet.from_pretrained("efficientnet-b0")
 
     def train(self, video, instructions):
         """
