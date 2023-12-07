@@ -1,7 +1,7 @@
 [![Multi-Modality](agorabanner.png)](https://discord.gg/qUtxnK2NMf)
 
 # RT-X
-Pytorch implementation of the models RT-1-X and RT-2-X from the paper: "Open X-Embodiment: Robotic Learning Datasets and RT-X Models"
+Pytorch implementation of the models RT-1-X and RT-2-X from the paper: "Open X-Embodiment: Robotic Learning Datasets and RT-X Models".
 
 Here we implement both model architectures, RTX-1 and RTX-2
 
@@ -75,6 +75,10 @@ out = model("img.jpeg")
 
 
 ```
+# Model Differences from the Paper Implementation
+## RT-1
+The main difference here is the substitution of a Film-EfficientNet backbone (pre-trained EfficientNet-B3 with Film layers inserted) with a MaxViT model.
+
 
 
 # Tests
