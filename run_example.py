@@ -1,5 +1,9 @@
 import argparse
-from examples import rtx1_example, rtx1_pretrained_example, rtx2_example
+from examples import (
+    rtx1_example,
+    rtx1_pretrained_example,
+    rtx2_example,
+)
 
 EXAMPLES = {
     "rtx1": rtx1_example,
