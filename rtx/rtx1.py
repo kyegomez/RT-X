@@ -624,6 +624,20 @@ class RT1Config:
         cond_drop_prob=0.2,
         use_attn_conditioner=False,
     ):
+        '''Configuration class to store the configuration of a `RT1`.
+
+        Args:
+            num_actions (int): Number of actions for the classification task
+            action_bins (int): Number of bins for each action
+            depth (int): Number of transformer blocks
+            heads (int): Number of heads for the transformer
+            dim_head (int): Dimension of the head
+            token_learner_ff_mult (int): Multiplier for the token learner
+            token_learner_num_layers (int): Number of layers for the token learner
+            token_learner_num_output_tokens (int): Number of output tokens for the token learner
+            cond_drop_prob (float): Dropout probability
+            use_attn_conditioner (bool): Whether to use the attention conditioner
+        '''
         self.num_actions = num_actions
         self.action_bins = action_bins
         self.depth = depth
@@ -790,16 +804,33 @@ class RTX1(nn.Module):
 
         Parameters
         ----------
-        num_actions : int
-            number of actions for the RT1 model
-        depth_rt1 : int
-            depth of the RT1 model
-        heads : int
-            number of heads for the RT1 model
-        dim_head_rt1 : int
-            dimension of the head for the RT1 model
-        cond_drop_prob : float
-            conditional drop probability for the RT1 model
+        rt1_config : RT1Config, optional
+            a configuration object for the RT1 model (default is None)
+        vit_config : FilmViTConfig, optional
+            a configuration object for the ViT model (default is None)
+
+
+
+        Example:
+
+        import torch
+        from rtx import RTX1
+
+        model = RTX1()
+
+        video = torch.randn(2, 3, 6, 224, 224)
+
+        instructions = ["bring me that apple sitting on the table", "please pass the butter"]
+
+        # compute the train logits
+        train_logits = model.train(video, instructions)
+
+        # set the model to evaluation mode
+        model.model.eval()
+
+        # compute the eval logits with a conditional scale of 3
+        eval_logits = model.run(video, instructions, cond_scale=3.0)
+        print(eval_logits.shape)
         """
         super().__init__()
         if rt1_config is None:

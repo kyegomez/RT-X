@@ -1,7 +1,7 @@
 [![Multi-Modality](agorabanner.png)](https://discord.gg/qUtxnK2NMf)
 
 # RT-X
-Pytorch implementation of the models RT-1-X and RT-2-X from the paper: "Open X-Embodiment: Robotic Learning Datasets and RT-X Models"
+Pytorch implementation of the models RT-1-X and RT-2-X from the paper: "Open X-Embodiment: Robotic Learning Datasets and RT-X Models".
 
 Here we implement both model architectures, RTX-1 and RTX-2
 
@@ -18,7 +18,11 @@ Here we implement both model architectures, RTX-1 and RTX-2
 `pip install rtx-torch `
 
 # Usage
+
+## RTX1
 - RTX1 Usage takes in text and videos
+- Does not use Efficient Net yet, we're integrating it now then the implementation will be complete
+- Uses SOTA transformer architecture
 
 ```python
 
@@ -42,6 +46,8 @@ eval_logits = model.run(video, instructions, cond_scale=3.0)
 print(eval_logits.shape)
 ```
 
+
+## RTX-2
 - RTX-2 takes in images and text and interleaves them to form multi-modal sentences and outputs text tokens not a 7 dimensional vector of x,y,z,roll,pitch,yaw,and gripper
 ```python
 
@@ -56,8 +62,29 @@ model = RTX2()
 output = model(img, text)
 print(output)
 
+```
+
+## EfficientNetFilm
+- Extracts the feature from the given image
+```python
+from rtx import EfficientNetFilm
+
+model = EfficientNetFilm("efficientnet-b0", 10)
+
+out = model("img.jpeg")
+
 
 ```
+# Model Differences from the Paper Implementation
+## RT-1
+The main difference here is the substitution of a Film-EfficientNet backbone (pre-trained EfficientNet-B3 with Film layers inserted) with a MaxViT model.
+
+
+
+# Tests
+I created a single tests file that uses pytest to run tests on all the modules, RTX1, RTX2, EfficientNetFil, first git clone and get into the repository, install the requirements.txt with pip then run this:
+
+`pytest tests.py`
 
 # License
 MIT
@@ -73,6 +100,7 @@ year = {2023},
 ```
 
 # Todo
-- Integrate Efficient net with RT-1 and RT-2
-- create training script for both models
-- Provide a table of all the datasets
+- Integrate EfficientNetFilm with RTX-1
+- Create training script for RTX-1 by unrolling observations and do basic cross entropy in first rt-1
+- Use RTX-2 dataset on huggingface
+- [Check out the project board for more tasks](https://github.com/users/kyegomez/projects/10/views/1)

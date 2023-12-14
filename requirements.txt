@@ -1,0 +1,6 @@
+torch
+einops
+efficientnet_pytorch
+torchvision
+pytest
+zetascale==0.8.3
