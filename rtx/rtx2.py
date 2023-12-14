@@ -67,6 +67,8 @@ class RTX2(torch.nn.Module):
         rotary_xpos=True,
         attn_flash=True,
         qk_norm=True,
+        *args,
+        **kwargs,
     ):
         super(RTX2, self).__init__()
 
