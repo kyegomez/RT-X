@@ -1,15 +1,15 @@
+from functools import partial
 import torch
 import torch.nn.functional as F
 from torch import nn, einsum
 from typing import List, Optional, Callable, Tuple
 from beartype import beartype
-
 from einops import pack, unpack, repeat, reduce, rearrange
 from einops.layers.torch import Rearrange, Reduce
 
 from classifier_free_guidance_pytorch import (
-    TextConditioner,
-    AttentionTextConditioner,
+    TextConditioner as FilmTextConditioner,
+    AttentionTextConditioner as FilmAttentionTextConditioner,
     classifier_free_guidance,
 )
 
@@ -265,111 +265,166 @@ class Attention(nn.Module):
         return rearrange(out, "(b x y) ... -> b x y ...", x=height, y=width)
 
 
-class MaxViT(nn.Module):
+class FilmViTConfig:
+    """Configuration class to store the configuration of a `FilmMaxVit`."""
+
     def __init__(
         self,
-        *,
-        num_classes,
-        dim,
-        depth,
-        dim_head=32,
-        dim_conv_stem=None,
-        window_size=7,
+        num_classes=1000,  # 1000 for ImageNet
+        input_channels=3,
+        stem_channels_in=64,  # Number of stem channels
+        dim_head=32, # Attention head dimension
+        block_channel_ins: List =[64, 128, 256, 512],  # Number of channels for each ViT block
+        block_layers=[2, 2, 5, 2],  # Number of layers for each ViT block        
+        window_size=7,  # Partition size
         mbconv_expansion_rate=4,
-        mbconv_shrinkage_rate=0.25,
+        mbconv_shrinkage_rate=0.25,  # MBConv squeeze ratio
         dropout=0.1,
-        channels=3
+        norm_layer: nn.Module = None,
+        activation_layer=nn.GELU,
+        stochastic_depth_prob=0.2,
+        pretrained=False,
+    ):
+        """
+        Constructs a MaxVit architecture with optional film layers from
+        `MaxVit: Multi-Axis Vision Transformer <https://arxiv.org/abs/2204.01697>`_.
+            Parameters
+            ----------
+            num_classes : int
+                Number of classes for the classification task
+            input_channels : int
+                Number of input channels
+            stem_channels_in : int
+                Number of stem channels
+            dim_head : int
+                Dimension of the head
+            block_channel_ins : List
+                Number of channels for each ViT block
+            block_layers : List
+                Number of layers for each ViT block
+            window_size : int
+                Partition size
+            mbconv_expansion_rate : int
+                MBConv expansion rate
+            mbconv_shrinkage_rate : float
+                MBConv squeeze ratio
+            dropout : float
+                Dropout probability
+            norm_layer : nn.Module
+                Normalization layer
+            activation_layer : nn.Module
+                Activation layer
+            stochastic_depth_prob : float
+                Stochastic depth probability
+        """
+        self.num_classes = num_classes
+        self.input_channels = input_channels
+        self.stem_channels_in = stem_channels_in
+        self.block_channel_ins = block_channel_ins
+        self.block_layers = block_layers
+        self.dim_head = dim_head
+        self.stem_channels_in  = stem_channels_in
+        self.window_size = window_size
+        self.mbconv_expansion_rate = mbconv_expansion_rate
+        self.mbconv_shrinkage_rate = mbconv_shrinkage_rate
+        self.dropout = dropout
+        self.norm_layer = norm_layer
+        if self.norm_layer is None:
+            self.norm_layer = partial(nn.BatchNorm2d, eps=1e-3,momentum=0.99)
+        self.activation_layer = activation_layer
+        self.pretrained = pretrained
+        self.stochastic_depth_prob = stochastic_depth_prob
+
+
+class FilmMaxVit(nn.Module):
+
+    def __init__(
+        self,
+        config: FilmViTConfig,
     ):
         super().__init__()
         assert isinstance(
-            depth, tuple
+            config.block_layers, tuple | list
         ), "depth needs to be tuple if integers indicating number of transformer blocks at that stage"
 
+        # List of number of input and output channels for each ViT block.
+        in_channels: List = [config.stem_channels_in] + config.block_channel_ins[:-1]
+        out_channels: List = config.block_channel_ins
+
+        # Condition after each layer starting with the input to the stem block.
+        self.cond_hidden_dims =[config.stem_channels_in]  # Used by FilmTextConditioner
+        for (block_in_channels, block_layers) in zip(out_channels, config.block_layers):
+            for _ in range(block_layers):
+                self.cond_hidden_dims.append(block_in_channels)
+        self.cond_hidden_dims = self.cond_hidden_dims[:-1]  # Don't condition on last embedding.
+        self.embed_dim = out_channels[-1]
+
+        if config.pretrained:
+            from torchvision.models import maxvit_t, MaxVit_T_Weights
+            self._vit = maxvit_t(weights=MaxVit_T_Weights.DEFAULT)
+            self.conv_stem = self._vit.stem
+            self.mlp_head = self._vit.classifier
+            self.layers = nn.ModuleList([])
+            for block in self._vit.blocks:
+                for layer in block.layers:
+                    self.layers.append(layer)
+            return
+
         # convolutional stem
-
-        dim_conv_stem = default(dim_conv_stem, dim)
-
         self.conv_stem = nn.Sequential(
-            nn.Conv2d(channels, dim_conv_stem, 3, stride=2, padding=1),
-            nn.Conv2d(dim_conv_stem, dim_conv_stem, 3, padding=1),
+            nn.Conv2d(config.input_channels, config.stem_channels_in, 3, stride=2, padding=1),
+            nn.Conv2d(config.stem_channels_in, config.stem_channels_in, 3, padding=1),
         )
-
-        # variables
-
-        num_stages = len(depth)
-
-        dims = tuple(map(lambda i: (2**i) * dim, range(num_stages)))
-        dims = (dim_conv_stem, *dims)
-        dim_pairs = tuple(zip(dims[:-1], dims[1:]))
-
         self.layers = nn.ModuleList([])
 
-        # shorthand for window size for efficient block - grid like attention
+        
+        for block_channels_in, block_channels_out, block_num_layers in zip(in_channels, out_channels, config.block_layers):
+            for i in range(block_num_layers):
+                layer_channels_in = block_channels_in if i == 0 else block_channels_out
 
-        w = window_size
-
-        # iterate through stages
-
-        cond_hidden_dims = []
-
-        for ind, ((layer_dim_in, layer_dim), layer_depth) in enumerate(
-            zip(dim_pairs, depth)
-        ):
-            for stage_ind in range(layer_depth):
-                is_first = stage_ind == 0
-                stage_dim_in = layer_dim_in if is_first else layer_dim
-
-                cond_hidden_dims.append(stage_dim_in)
-
-                block = nn.Sequential(
+                layer = nn.Sequential(
                     MBConv(
-                        stage_dim_in,
-                        layer_dim,
-                        downsample=is_first,
-                        expansion_rate=mbconv_expansion_rate,
-                        shrinkage_rate=mbconv_shrinkage_rate,
+                        layer_channels_in,
+                        block_channels_out,
+                        downsample=(i == 0),
+                        expansion_rate=config.mbconv_expansion_rate,
+                        shrinkage_rate=config.mbconv_shrinkage_rate,
                     ),
-                    Rearrange(
-                        "b d (x w1) (y w2) -> b x y w1 w2 d", w1=w, w2=w
-                    ),  # block-like attention
+                    Rearrange("b d (x w1) (y w2) -> b x y w1 w2 d", w1=config.window_size,
+                              w2=config.window_size),  # block-like attention
                     Residual(
                         Attention(
-                            dim=layer_dim,
-                            dim_head=dim_head,
-                            dropout=dropout,
-                            window_size=w,
-                        )
-                    ),
-                    Residual(FeedForward(dim=layer_dim, dropout=dropout)),
+                            dim=block_channels_out,
+                            dim_head=config.dim_head,
+                            dropout=config.dropout,
+                            window_size=config.window_size,
+                        )),
+                    Residual(FeedForward(dim=block_channels_out,
+                                         dropout=config.dropout)),
                     Rearrange("b x y w1 w2 d -> b d (x w1) (y w2)"),
-                    Rearrange(
-                        "b d (w1 x) (w2 y) -> b x y w1 w2 d", w1=w, w2=w
-                    ),  # grid-like attention
+                    Rearrange("b d (w1 x) (w2 y) -> b x y w1 w2 d", w1=config.window_size,
+                              w2=config.window_size),  # grid-like attention
                     Residual(
                         Attention(
-                            dim=layer_dim,
-                            dim_head=dim_head,
-                            dropout=dropout,
-                            window_size=w,
-                        )
-                    ),
-                    Residual(FeedForward(dim=layer_dim, dropout=dropout)),
+                            dim=block_channels_out,
+                            dim_head=config.dim_head,
+                            dropout=config.dropout,
+                            window_size=config.window_size,
+                        )),
+                    Residual(
+                        FeedForward(dim=block_channels_out,
+                                    dropout=config.dropout)),
                     Rearrange("b x y w1 w2 d -> b d (w1 x) (w2 y)"),
                 )
 
-                self.layers.append(block)
-
-        embed_dim = dims[-1]
-        self.embed_dim = dims[-1]
-
-        self.cond_hidden_dims = cond_hidden_dims
+                self.layers.append(layer)
 
         # mlp head out
 
         self.mlp_head = nn.Sequential(
             Reduce("b d h w -> b d", "mean"),
-            LayerNorm(embed_dim),
-            nn.Linear(embed_dim, num_classes),
+            LayerNorm(self.embed_dim),
+            nn.Linear(self.embed_dim, config.num_classes, bias=False),
         )
 
     @beartype
@@ -554,12 +609,10 @@ class TokenLearner(nn.Module):
 # Robotic Transformer
 
 
-@beartype
-class RT1(nn.Module):
+
+class RT1Config:
     def __init__(
         self,
-        *,
-        vit: MaxViT,
         num_actions=11,
         action_bins=256,
         depth=6,
@@ -570,48 +623,80 @@ class RT1(nn.Module):
         token_learner_num_output_tokens=8,
         cond_drop_prob=0.2,
         use_attn_conditioner=False,
+    ):
+        '''Configuration class to store the configuration of a `RT1`.
+
+        Args:
+            num_actions (int): Number of actions for the classification task
+            action_bins (int): Number of bins for each action
+            depth (int): Number of transformer blocks
+            heads (int): Number of heads for the transformer
+            dim_head (int): Dimension of the head
+            token_learner_ff_mult (int): Multiplier for the token learner
+            token_learner_num_layers (int): Number of layers for the token learner
+            token_learner_num_output_tokens (int): Number of output tokens for the token learner
+            cond_drop_prob (float): Dropout probability
+            use_attn_conditioner (bool): Whether to use the attention conditioner
+        '''
+        self.num_actions = num_actions
+        self.action_bins = action_bins
+        self.depth = depth
+        self.heads = heads
+        self.dim_head = dim_head
+        self.token_learner_ff_mult = token_learner_ff_mult
+        self.token_learner_num_layers = token_learner_num_layers
+        self.token_learner_num_output_tokens = token_learner_num_output_tokens
+        self.cond_drop_prob = cond_drop_prob
+        self.use_attn_conditioner = use_attn_conditioner
+
+
+@beartype
+class RT1(nn.Module):
+    def __init__(
+        self,
+        config: RT1Config,
+        vit: FilmMaxVit,
         conditioner_kwargs: dict = dict()
     ):
         super().__init__()
         self.vit = vit
-
         self.num_vit_stages = len(vit.cond_hidden_dims)
 
-        conditioner_klass = (
-            AttentionTextConditioner if use_attn_conditioner else TextConditioner
-        )
+        film_layer = (FilmAttentionTextConditioner
+                      if config.use_attn_conditioner else FilmTextConditioner)
 
-        self.conditioner = conditioner_klass(
-            hidden_dims=(*tuple(vit.cond_hidden_dims), *((vit.embed_dim,) * depth * 2)),
+        self.conditioner = film_layer(
+            hidden_dims=(*tuple(vit.cond_hidden_dims),
+                         *((vit.embed_dim,) * config.depth * 2)),
             hiddens_channel_first=(
                 *((True,) * self.num_vit_stages),
-                *((False,) * depth * 2),
+                *((False,) * config.depth * 2),
             ),
-            cond_drop_prob=cond_drop_prob,
-            **conditioner_kwargs
+            cond_drop_prob=config.cond_drop_prob,
+            **conditioner_kwargs,
         )
 
         self.token_learner = TokenLearner(
             dim=vit.embed_dim,
-            ff_mult=token_learner_ff_mult,
-            num_output_tokens=token_learner_num_output_tokens,
-            num_layers=token_learner_num_layers,
+            ff_mult=config.token_learner_ff_mult,
+            num_output_tokens=config.token_learner_num_output_tokens,
+            num_layers=config.token_learner_num_layers,
         )
 
-        self.num_learned_tokens = token_learner_num_output_tokens
+        self.num_learned_tokens = config.token_learner_num_output_tokens
 
-        self.transformer_depth = depth
+        self.transformer_depth = config.depth
 
         self.transformer = Transformer(
-            dim=vit.embed_dim, dim_head=dim_head, heads=heads, depth=depth
+            dim=vit.embed_dim, dim_head=config.dim_head, heads=config.heads, depth=config.depth
         )
 
-        self.cond_drop_prob = cond_drop_prob
+        self.cond_drop_prob = config.cond_drop_prob
 
         self.to_logits = nn.Sequential(
             LayerNorm(vit.embed_dim),
-            nn.Linear(vit.embed_dim, num_actions * action_bins),
-            Rearrange("... (a b) -> ... a b", b=action_bins),
+            nn.Linear(vit.embed_dim, config.num_actions * config.action_bins),
+            Rearrange("... (a b) -> ... a b", b=config.action_bins),
         )
 
     @classifier_free_guidance
@@ -696,7 +781,7 @@ class RTX1(nn.Module):
 
     Attributes
     ----------
-    vit : MaxViT
+    vit : FilmMaxVit
         a Vision Transformer model
     model : RT1
         a reinforcement learning model
@@ -707,102 +792,57 @@ class RTX1(nn.Module):
         Computes the logits for the given video and instructions using the RT1 model in training mode.
     eval(video, instructions, cond_scale=1.0):
         Computes the logits for the given video and instructions using the RT1 model in evaluation mode.
-
-    Parameters
-    ----------
-    num_classes : int
-        number of classes for the ViT model
-    dim : int
-        dimension of the ViT model
-    dim_conv_stem : int
-        dimension of the convolutional stem for the ViT model
-    dim_head_vit : int
-        dimension of the head for the ViT model
-    depth_vit : tuple
-        depth of the ViT model
-    window_size : int
-        window size for the ViT model
-    mbconv_expansion_rate : float
-        expansion rate for the mbconv layer in the ViT model
-    mbconv_shrinkage_rate : float
-        shrinkage rate for the mbconv layer in the ViT model
-    dropout_vit : float
-        dropout rate for the ViT model
-    num_actions : int
-        number of actions for the RT1 model
-    depth_rt1 : int
-        depth of the RT1 model
-    heads : int
-        number of heads for the RT1 model
-    dim_head_rt1 : int
-        dimension of the head for the RT1 model
-    cond_drop_prob : float
-        conditional drop probability for the RT1 model
-
-    Examples
-    import torch
-    from rtx import RTX1
-
-    model = RTX1()
-
-    video = torch.randn(2, 3, 6, 224, 224)
-
-    instructions = ["bring me that apple sitting on the table", "please pass the butter"]
-
-    # compute the train logits
-    train_logits = model.train(video, instructions)
-
-    # set the model to evaluation mode
-    model.model.eval()
-
-    # compute the eval logits with a conditional scale of 3
-    eval_logits = model.run(video, instructions, cond_scale=3.0)
-    print(eval_logits.shape)
-
     """
 
     def __init__(
         self,
-        num_classes=1000,
-        dim=96,
-        dim_conv_stem=64,
-        dim_head_vit=32,
-        depth_vit=(2, 2, 5, 2),
-        window_size=7,
-        mbconv_expansion_rate=4,
-        mbconv_shrinkage_rate=0.25,
-        dropout_vit=0.1,
-        num_actions=11,
-        depth_rt1=6,
-        heads=8,
-        dim_head_rt1=64,
-        cond_drop_prob=0.2,
+        rt1_config: RT1Config = None,
+        vit_config: FilmViTConfig = None,
     ):
+        """
+        Constructs all the necessary attributes for the RTX1 object.
+
+        Parameters
+        ----------
+        rt1_config : RT1Config, optional
+            a configuration object for the RT1 model (default is None)
+        vit_config : FilmViTConfig, optional
+            a configuration object for the ViT model (default is None)
+
+
+
+        Example:
+
+        import torch
+        from rtx import RTX1
+
+        model = RTX1()
+
+        video = torch.randn(2, 3, 6, 224, 224)
+
+        instructions = ["bring me that apple sitting on the table", "please pass the butter"]
+
+        # compute the train logits
+        train_logits = model.train(video, instructions)
+
+        # set the model to evaluation mode
+        model.model.eval()
+
+        # compute the eval logits with a conditional scale of 3
+        eval_logits = model.run(video, instructions, cond_scale=3.0)
+        print(eval_logits.shape)
+        """
         super().__init__()
+        if rt1_config is None:
+            rt1_config = RT1Config()
+        if vit_config is None:
+            vit_config = FilmViTConfig()
 
-        self.vit = MaxViT(
-            num_classes=num_classes,
-            dim=dim,
-            dim_conv_stem=dim_conv_stem,
-            dim_head=dim_head_vit,
-            depth=depth_vit,
-            window_size=window_size,
-            mbconv_expansion_rate=mbconv_expansion_rate,
-            mbconv_shrinkage_rate=mbconv_shrinkage_rate,
-            dropout=dropout_vit,
-        )
-
+        self.vit = FilmMaxVit(vit_config)
         self.model = RT1(
+            config=rt1_config,
             vit=self.vit,
-            num_actions=num_actions,
-            depth=depth_rt1,
-            heads=heads,
-            dim_head=dim_head_rt1,
-            cond_drop_prob=cond_drop_prob,
         )
-
-        # init efficient net
-        # self.efficent_net = EfficientNet.from_pretrained("efficientnet-b0")
 
     def train(self, video, instructions):
         """
@@ -833,6 +873,7 @@ class RTX1(nn.Module):
 
         Parameters
         ----------
+
         video : torch.Tensor
             a tensor containing the video data
         instructions : torch.Tensor
