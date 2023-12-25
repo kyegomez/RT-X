@@ -418,22 +418,22 @@ files = [
 
 [[package]]
 name = "classifier-free-guidance-pytorch"
-version = "0.2.3"
+version = "0.5.1"
 description = "Classifier Free Guidance - Pytorch"
 optional = false
 python-versions = "*"
 files = [
-    {file = "classifier-free-guidance-pytorch-0.2.3.tar.gz", hash = "sha256:35912ecc8379da3a06ff23864904ed269bea0e77676ce9da78590535d2d37674"},
-    {file = "classifier_free_guidance_pytorch-0.2.3-py3-none-any.whl", hash = "sha256:5f0b2dd6d4167b4eee11b2501e324e99383832ee767a7241403d32953e43bfbb"},
+    {file = "classifier-free-guidance-pytorch-0.5.1.tar.gz", hash = "sha256:578249c901e873b2175ce206ae1d106c10c65622ee5b6cf1185542fdb763a0fb"},
+    {file = "classifier_free_guidance_pytorch-0.5.1-py3-none-any.whl", hash = "sha256:f8ac54c7e7e5491510e3a8d5811a04d7c073ec25966fa08dec22bd263c1169d8"},
 ]
 
 [package.dependencies]
 beartype = "*"
-einops = ">=0.6"
+einops = ">=0.7"
 ftfy = "*"
 open-clip-torch = ">=2.8.0"
-torch = ">=1.6"
-transformers = "*"
+torch = ">=2.0"
+transformers = {version = "*", extras = ["torch"]}
 
 [[package]]
 name = "click"
@@ -2528,6 +2528,7 @@ files = [
 ]
 
 [package.dependencies]
+accelerate = {version = ">=0.20.3", optional = true, markers = "extra == \"torch\""}
 filelock = "*"
 huggingface-hub = ">=0.16.4,<1.0"
 numpy = ">=1.17"
@@ -2537,6 +2538,7 @@ regex = "!=2019.12.17"
 requests = "*"
 safetensors = ">=0.3.1"
 tokenizers = ">=0.14,<0.15"
+torch = {version = ">=1.10,<1.12.0 || >1.12.0", optional = true, markers = "extra == \"torch\""}
 tqdm = ">=4.27"
 
 [package.extras]
