@@ -160,3 +160,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 datasets_cache/
+**/*checkpoints**/*
+.DS_Store
+runs/

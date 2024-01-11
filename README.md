@@ -23,9 +23,10 @@ Here we implement both model architectures, RTX-1 and RTX-2
 ```python
 
 import torch
-from rtx.rtx1 import RTX1
+from rtx.rtx1 import RTX1, FilmViTConfig
 
-model = RTX1()
+# Use a pre-trained MaxVit model from pytorch
+model = RTX1(film_vit_config=FilmViTConfig(pretrained=pretrained))
 
 video = torch.randn(2, 3, 6, 224, 224)
 

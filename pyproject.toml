@@ -27,14 +27,25 @@ packages = [
 
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9,<3.12"
 torch = "*"
 einops = "*"
 efficientnet_pytorch = "*"
 zetascale = "0.8.3"
-torchvision = "*"
+torchvision = "^0.16.2"
 classifier_free_guidance_pytorch = "*"
-
-
+ray = "^2.8.1"
+gin-config = "^0.5.0"
+gymnasium = "^0.29.1"
+dm-tree = "^0.1.8"
+scikit-image = "^0.22.0"
+lz4 = "^4.3.2"
+torch-tb-profiler = "^0.4.3"
+protobuf =  ">=3.19.6,<4.24"
+tensorboardx = "^2.6.2.2"
+tensorboard = "^2.15.1"
+# tensorflow-io-gcs-filesystem = "0.34.0"
+olefile = "^0.47"
+tf-agents = "^0.19.0"
 [tool.poetry.dev-dependencies]
 # Add development dependencies here

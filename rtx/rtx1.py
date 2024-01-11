@@ -3,7 +3,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn, einsum
 from typing import List, Optional, Callable, Tuple
-from beartype import beartype
+# from beartype import beartype
 from einops import pack, unpack, repeat, reduce, rearrange
 from einops.layers.torch import Rearrange, Reduce
 
@@ -427,7 +427,7 @@ class FilmMaxVit(nn.Module):
             nn.Linear(self.embed_dim, config.num_classes, bias=False),
         )
 
-    @beartype
+    # @beartype
     def forward(
         self,
         x,
@@ -543,7 +543,7 @@ class TransformerAttention(nn.Module):
         return self.to_out(out)
 
 
-@beartype
+# @beartype
 class Transformer(nn.Module):
     def __init__(
         self, dim, dim_head=64, heads=8, depth=6, attn_dropout=0.0, ff_dropout=0.0
@@ -636,7 +636,7 @@ class RT1Config:
         self.use_attn_conditioner = use_attn_conditioner
 
 
-@beartype
+ #@beartype
 class RT1(nn.Module):
     def __init__(
         self,
