@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "rtx-torch"
-version = "0.0.6"
+version = "0.1.0"
 description = "rtx - Pytorch"
 license = "MIT"
 authors = ["Kye Gomez <kye@apac.ai>"]
@@ -44,8 +44,7 @@ torch-tb-profiler = "^0.4.3"
 protobuf =  ">=3.19.6,<4.24"
 tensorboardx = "^2.6.2.2"
 tensorboard = "^2.15.1"
-# tensorflow-io-gcs-filesystem = "0.34.0"
 olefile = "^0.47"
-tf-agents = "^0.19.0"
+
 [tool.poetry.dev-dependencies]
 # Add development dependencies here

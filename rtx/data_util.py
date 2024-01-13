@@ -68,27 +68,37 @@ def describe(dic, prefix='', str_built=[]) -> str:
             if len(v) > 0:
                 v_description = ''
                 if isinstance(v[0], torch.Tensor):
-                    v_description = f'({tuple(v[0].size())}, {v[0].dtype})'
+                    v_description = (
+                        f"({tuple(v[0].size())}, {v[0].dtype})"
+                    )
                 elif isinstance(v[0], bytes):
                     v_description = describe_img(v[0])
-                list_type = f'({v[0].__class__.__name__ }{v_description})'
-            str_built.append(
-                f'{prefix} {k}, {v.__class__.__name__}{list_type} sz: {len(v)}\n')
+                list_type = (
+                    f"({v[0].__class__.__name__ }{v_description})"
+                )
+            print(
+                f"{prefix} {k}, {v.__class__.__name__}{list_type} sz:"
+                f" {len(v)}"
+            )
             if len(v) > 0:
              str_built.append(describe(v[0], prefix + '  '))
         elif isinstance(v, dict):
-            str_built.append(f'{prefix} {k}, {v.__class__.__name__} sz: {len(v.items())}\n')
-            str_built.append(describe(v, prefix + '  '))
+            print(
+                f"{prefix} {k}, {v.__class__.__name__} sz:"
+                f" {len(v.items())}"
+            )
+            describe(v, prefix + "  ")
         elif isinstance(v, bytes):
-            str_built.append(f'{prefix} {k}, {describe_img( v)}\n')
+            print(f"{prefix} {k}, {describe_img( v)}")
         elif isinstance(v, str):
             str_built.append(f'{prefix} {k}, {v.__class__.__name__} v: {v}\n')
         else:
             tensor_type = ''
             if isinstance(v, torch.Tensor):
-                tensor_type = f'({tuple(v[0].size())}, {v[0].dtype})'
-            str_built.append(f'{prefix} {k}, {v.__class__.__name__} {tensor_type}\n')
-    return ('').join(str_built)
+                tensor_type = f"({tuple(v[0].size())}, {v[0].dtype})"
+            print(
+                f"{prefix} {k}, {v.__class__.__name__} {tensor_type} "
+            )
 
 
 def preprocess(dic: any, height=224, width=224):
@@ -123,6 +133,7 @@ def preprocess(dic: any, height=224, width=224):
     return dic
 
 
+
 def format_imgs(dic: any, sz: int):
     '''Resizes images to sz as a numpy array.
 
@@ -134,6 +145,7 @@ def format_imgs(dic: any, sz: int):
     '''
     if isinstance(dic, bytes):
         img = Image.open(io.BytesIO(dic))
+        return np.array(img.resize((sz, sz)))
         return np.array(img.resize((sz, sz)))
 
     if not isinstance(dic, dict):
