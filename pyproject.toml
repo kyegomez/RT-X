@@ -29,11 +29,11 @@ packages = [
 [tool.poetry.dependencies]
 python = "^3.8"
 torch = "*"
-einops = "*"
-efficientnet_pytorch = "*"
+einops = "0.7.0"
+efficientnet_pytorch = "0.7.1"
 zetascale = "0.9.9"
 torchvision = "*"
-classifier-free-guidance-pytorch = "*"
+classifier-free-guidance-pytorch = "0.5.1"
 
 
 

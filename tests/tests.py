@@ -7,7 +7,7 @@ from zeta.structs import (
 )
 
 from rtx.efficient_net import EfficientNetFilm
-from rtx.rtx1 import RT1, RTX1, MaxViT
+from rtx.rtx1 import RT1, RTX1, FilmMaxVit
 from rtx.rtx2 import RTX2
 
 
@@ -173,7 +173,7 @@ def rtx1_model():
 # Test case to check if RTX1 initializes correctly
 def test_rtx1_initialization(rtx1_model):
     assert isinstance(rtx1_model, RTX1)
-    assert isinstance(rtx1_model.vit, MaxViT)
+    assert isinstance(rtx1_model.vit, FilmMaxVit)
     assert isinstance(rtx1_model.model, RT1)
 
 
