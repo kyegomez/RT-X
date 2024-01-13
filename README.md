@@ -18,7 +18,7 @@ Here we implement both model architectures, RTX-1 and RTX-2
 `pip install rtx-torch `
 
 # Usage
-
+To see detailed usage, run `python run.py --help`.
 ## RTX1
 - RTX1 Usage takes in text and videos
 - Does not use Efficient Net yet, we're integrating it now then the implementation will be complete
@@ -85,7 +85,7 @@ The main difference here is the substitution of a Film-EfficientNet backbone (pr
 # Tests
 I created a single tests file that uses pytest to run tests on all the modules, RTX1, RTX2, EfficientNetFil, first git clone and get into the repository, install the requirements.txt with pip then run this:
 
-`pytest tests.py`
+`python -m pytest tests/tests.py`
 
 # License
 MIT
