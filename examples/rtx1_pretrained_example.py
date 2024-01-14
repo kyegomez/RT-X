@@ -3,7 +3,7 @@ from rtx.rtx1 import RTX1, FilmViTConfig
 
 
 def run():
-    model = RTX1(FilmViTConfig(pretrained=True))
+    model = RTX1(vit_config=FilmViTConfig(pretrained=True))
 
     video = torch.randn(2, 3, 6, 224, 224)
 
