@@ -1,9 +1,14 @@
 import torch
-from rtx import RTX1
+from rtx.rtx1 import RTX1, FilmViTConfig
 
+def run(pretrained=False):
+    ''' Run RT-X1 example.
 
-def run():
-    model = RTX1()
+    Args:
+        pretrained (bool, optional): Whether or not to use a pretrained MaxVit with film (downloads from pytorch). 
+            Defaults to False.
+    '''
+    model = RTX1(vit_config=FilmViTConfig(pretrained=pretrained))
 
     video = torch.randn(2, 3, 6, 224, 224)
 

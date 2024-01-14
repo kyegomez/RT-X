@@ -27,39 +27,18 @@ packages = [
 
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9,<3.12"
 torch = "*"
+torchvision = "^0.16.2"
 einops = "0.7.0"
 efficientnet_pytorch = "0.7.1"
 zetascale = "0.9.9"
-torchvision = "*"
 classifier-free-guidance-pytorch = "0.5.1"
+lz4 = "^4.3.2"
+torch-tb-profiler = "^0.4.3"
+tensorboardx = "^2.6.2.2"
+tensorboard = "^2.15.1"
+olefile = "^0.47"
 
-
-
-[tool.poetry.group.lint.dependencies]
-ruff = ">=0.0.249,<0.1.12"
-types-toml = "^0.10.8.1"
-types-redis = "^4.3.21.6"
-types-pytz = "^2023.3.0.0"
-black = "^23.1.0"
-types-chardet = "^5.0.4.6"
-mypy-protobuf = "^3.0.0"
-
-
-[tool.autopep8]
-max_line_length = 70
-ignore = "E501,W6"  # or ["E501", "W6"]
-in-place = true
-recursive = true
-aggressive = 3
-
-[tool.ruff]
-line-length = 70
-
-[tool.black]
-line-length = 70
-target-version = ['py38']
-preview = true
-
-
+[tool.poetry.dev-dependencies]
+# Add development dependencies here
