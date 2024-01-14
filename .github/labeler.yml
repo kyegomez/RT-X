@@ -1,4 +1,3 @@
-# Add 'Documentation' label to any change to .md files within the entire repository 
 Documentation:
 - changed-files:
   - any-glob-to-any-file: '**/*.md'
