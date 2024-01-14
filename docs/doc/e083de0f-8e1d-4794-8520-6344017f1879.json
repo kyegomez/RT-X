@@ -1,0 +1,10 @@
+{
+    "summary": "This code imports necessary libraries and defines a function called `run()`. It uses RTX1 model with pretrained FilmViT configuration. It takes video input, instructions as input, computes train logits, sets the model to evaluation mode, computes eval logits with a conditional scale of 3, and prints the shape of eval_logits.",
+    "details": [
+        {
+            "comment": "This code imports necessary libraries and defines a function called `run()`. It uses RTX1 model with pretrained FilmViT configuration. It takes video input, instructions as input, computes train logits, sets the model to evaluation mode, computes eval logits with a conditional scale of 3, and prints the shape of eval_logits.",
+            "location": "\"/media/root/Prima/works/RT-X/docs/src/examples/rtx1_pretrained_example.py\":0-26",
+            "content": "import torch\nfrom rtx.rtx1 import RTX1, FilmViTConfig\ndef run():\n    model = RTX1(FilmViTConfig(pretrained=True))\n    video = torch.randn(2, 3, 6, 224, 224)\n    instructions = [\n        \"bring me that apple sitting on the table\",\n        \"please pass the butter\",\n    ]\n    # compute the train logits\n    train_logits = model.train(video, instructions)\n    # set the model to evaluation mode\n    model.model.eval()\n    # compute the eval logits with a conditional scale of 3\n    eval_logits = model.run(video, instructions, cond_scale=3.0)\n    print(eval_logits.shape)\nif __name__ == \"__main__\":\n    run()"
+        }
+    ]
+}

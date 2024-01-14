@@ -1,0 +1,10 @@
+{
+    "summary": "Importing and defining the classes RTX2, RTX1, EfficientNetFilm from their respective modules and adding them to __all__ for easy access.",
+    "details": [
+        {
+            "comment": "Importing and defining the classes RTX2, RTX1, EfficientNetFilm from their respective modules and adding them to __all__ for easy access.",
+            "location": "\"/media/root/Prima/works/RT-X/docs/src/rtx/__init__.py\":0-12",
+            "content": "from rtx.rtx2 import RTX2\nfrom rtx.rtx1 import RTX1\nfrom rtx.efficient_net import EfficientNetFilm\nfrom rtx.data_util import describe, format_imgs, preprocess\n__all__ = [\n    \"RTX2\",\n    \"RTX1\",\n    \"EfficientNetFilm\",\n    \"describe\",\n    \"format_imgs\",\n    \"preprocess\",\n]"
+        }
+    ]
+}

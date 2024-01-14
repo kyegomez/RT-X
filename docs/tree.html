@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="github-markdown.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <title>Project structure of: kyegomez/RT-X</title>
+    <style>
+        .directory:hover {
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        :target {
+            background-color: yellow !important;
+        }
+
+        .folded::before {
+            content: '\25B6';
+            margin-right: 8px;
+            /* Add space between marker and text */
+        }
+
+        .expanded::before {
+            content: '\25BC';
+            margin-right: 8px;
+            /* Add space between marker and text */
+        }
+    </style>
+    <script>
+        function toggleVisibility(element) {
+            let mclass = element.getAttribute("class");
+            if (mclass == "expanded") {
+                element.setAttribute('class', 'folded');
+            } else {
+                element.setAttribute('class', 'expanded');
+            }
+            const siblings = element.parentNode.children;
+            for (const sibling of siblings) {
+                if (sibling !== element) {
+                    sibling.style.display = (sibling.style.display === 'none') ? 'block' : 'none';
+                }
+            }
+        }
+    </script>
+    <style>
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+
+            .partial-repository-url {
+                display: none;
+            }
+        }
+
+        ul {
+            list-style: none;
+        }
+        #feeling-lucky:hover{
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <article class="markdown-body">
+        <h2>Project structure<span hierarchy="0" class="partial-repository-url"> of: kyegomez/RT-X</span><div style="float: right;"><a title="Document index" style="margin:3.5px;" href="index.html"><i class="bi bi-search"></i></a><a title="Feeling lucky" style="margin:3.5px;" id="feeling-lucky" href="#"><i class="bi bi-dice-3"></i></a><a title="Expand tree" style="margin:3.5px;" href="tree.html?full=true" id="expand-tree"><i class="bi bi-caret-down-square"></i></a></div></h2>
+<ul>
+<li><span hierarchy="0" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/"><code>RT-X</code></strong> <em>Evaluates real-time efficient image-text transformer performance.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/efficient_net_example.py" id="/efficient_net_example.py"><code>efficient&UnderBar;net&UnderBar;example&period;py</code></a> <em>EfficientNet film model processes image</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/examples/"><code>examples</code></strong> <em>RTX models: Training, pretraining, evaluation and image-text processing</em></span><ul>
+<li><a class="file_link" href="index.html?q=/examples/rtx1_example.py" id="/examples/rtx1_example.py"><code>rtx1&UnderBar;example&period;py</code></a> <em>Trains RTX1 model on video frames and prints eval logits shape.</em></li>
+<li><a class="file_link" href="index.html?q=/examples/rtx1_pretrained_example.py" id="/examples/rtx1_pretrained_example.py"><code>rtx1&UnderBar;pretrained&UnderBar;example&period;py</code></a> <em>RTX1 model pretrained, FilmViT, video input, instructions, train &amp; eval logits</em></li>
+<li><a class="file_link" href="index.html?q=/examples/rtx2_example.py" id="/examples/rtx2_example.py"><code>rtx2&UnderBar;example&period;py</code></a> <em>RTX2 image-text processing with Torch and TensorFlow</em></li>
+</ul>
+</li>
+<li><a class="file_link" href="index.html?q=/pyproject.toml" id="/pyproject.toml"><code>pyproject&period;toml</code></a> <em>PyTorch, EfficientNet, Python 3.8, Ruff, Black configuration for "rtx-torch" package.</em></li>
+<li><a class="file_link" href="index.html?q=/README.md" id="/README.md"><code>README&period;md</code></a> <em>Pytorch RT-X models: RTX-1, RTX-2, 7D output, install via pip</em></li>
+<li><a class="file_link" href="index.html?q=/requirements.txt" id="/requirements.txt"><code>requirements&period;txt</code></a> <em>Python packages: Torch, Einops, EfficientNet, Torchvision, Pytest; ZetaScale 0.8.3 needed.</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/rtx/"><code>rtx</code></strong> <em>Real-time image-text transformer with attention</em></span><ul>
+<li><a class="file_link" href="index.html?q=/rtx/__init__.py" id="/rtx/__init__.py"><code>&UnderBar;&UnderBar;init&UnderBar;&UnderBar;&period;py</code></a> <em>Imports, defines and exposes RTX classes.</em></li>
+<li><a class="file_link" href="index.html?q=/rtx/data_util.py" id="/rtx/data_util.py"><code>data&UnderBar;util&period;py</code></a> <em>Resizes images, removes None values in nested dictionaries.</em></li>
+<li><a class="file_link" href="index.html?q=/rtx/efficient_net.py" id="/rtx/efficient_net.py"><code>efficient&UnderBar;net&period;py</code></a> <em>EfficientNet model for image features extraction.</em></li>
+<li><a class="file_link" href="index.html?q=/rtx/rtx1.py" id="/rtx/rtx1.py"><code>rtx1&period;py</code></a> <em>Deep learning image classification model with real-time video processing</em></li>
+<li><a class="file_link" href="index.html?q=/rtx/rtx2.py" id="/rtx/rtx2.py"><code>rtx2&period;py</code></a> <em>Customizable image-text transformer architecture with attention</em></li>
+</ul>
+</li>
+<li><a class="file_link" href="index.html?q=/run_example.py" id="/run_example.py"><code>run&UnderBar;example&period;py</code></a> <em>Run example function with argument parser.</em></li>
+<li><a class="file_link" href="index.html?q=/tests.py" id="/tests.py"><code>tests&period;py</code></a> <em>Tests EfficientNetFilm model features and exceptions.</em></li>
+<li><span hierarchy="1" class="expanded" onclick="toggleVisibility(this)" ><strong class="directory" id="/tests/"><code>tests</code></strong> <em>Tests RTX1 model and data processing.</em></span><ul>
+<li><a class="file_link" href="index.html?q=/tests/test_data_utils.py" id="/tests/test_data_utils.py"><code>test&UnderBar;data&UnderBar;utils&period;py</code></a> <em>Tests data processing and image preprocessing in "RT-X" codebase.</em></li>
+<li><a class="file_link" href="index.html?q=/tests/test_rtx1.py" id="/tests/test_rtx1.py"><code>test&UnderBar;rtx1&period;py</code></a> <em>RTX1 model layer testing with condition scale 3 and shape assertion.</em></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+    </article>
+    <script type="text/javascript">
+        function getQueryParams() {
+            var search = window.location.search.substring(1); // Remove leading '?'
+            var queryParams = {};
+            search.split('&').forEach(function (pair) {
+                var parts = pair.split('=');
+                var key = decodeURIComponent(parts[0]);
+                var value = decodeURIComponent(parts[1]);
+                queryParams[key] = value;
+            });
+            return queryParams;
+        }
+
+        const queryParams = getQueryParams(window.location.search);
+        const show_full = queryParams.full == "true";
+        //const is_random = queryParams.random == 'true';
+        function feelingLucky() {
+            var elements = document.getElementsByClassName("file_link");
+            var randomIndex = Math.floor(Math.random() * elements.length);
+            window.location = elements[randomIndex].href;
+        }
+        //if (is_random) {feelingLucky();}
+        document.getElementById("feeling-lucky").onclick = feelingLucky;
+        if (!show_full) {
+            const spans = document.querySelectorAll('span');
+            for (let span of spans) {
+                if (span.getAttribute("hierarchy") == '0') { continue }
+                toggleVisibility(span);
+            }
+        } else {
+            const expand_elem = document.getElementById('expand-tree');
+            expand_elem.setAttribute("href", "tree.html");
+            expand_elem.setAttribute("title", "Undo expand");
+            expand_elem.innerHTML = '<i class="bi bi-caret-up-square"></i>'
+        }
+
+    </script>
+</body>
+
+</html>

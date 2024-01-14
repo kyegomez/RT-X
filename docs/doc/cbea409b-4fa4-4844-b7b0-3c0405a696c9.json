@@ -1,0 +1,10 @@
+{
+    "summary": "This code imports various example functions, defines a dictionary of example names and their corresponding functions, and sets the default model type as \"rtx1\". It then creates an argument parser for command line input, allowing the user to specify a different example from the available options. Finally, it uses the provided arguments to run the selected example function.",
+    "details": [
+        {
+            "comment": "This code imports various example functions, defines a dictionary of example names and their corresponding functions, and sets the default model type as \"rtx1\". It then creates an argument parser for command line input, allowing the user to specify a different example from the available options. Finally, it uses the provided arguments to run the selected example function.",
+            "location": "\"/media/root/Prima/works/RT-X/docs/src/run_example.py\":0-24",
+            "content": "import argparse\nfrom examples import (\n    rtx1_example,\n    rtx1_pretrained_example,\n    rtx2_example,\n)\nEXAMPLES = {\n    \"rtx1\": rtx1_example,\n    \"rtx1-pretrained\": rtx1_pretrained_example,\n    \"rtx2\": rtx2_example,\n}\nif __name__ == \"__main__\":\n    parser = argparse.ArgumentParser()\n    parser.add_argument(\n        \"-m\",\n        \"--model_type\",\n        type=str,\n        default=\"rtx1\",\n        choices=EXAMPLES.keys(),\n        help=\"Example to choose from\",\n    )\n    args = parser.parse_args()\n    EXAMPLES[args.model_type].run()"
+        }
+    ]
+}

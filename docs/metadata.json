@@ -1,0 +1,90 @@
+{
+    "url": {
+        "full": "https://github.com/kyegomez/RT-X",
+        "partial": "kyegomez/RT-X"
+    },
+    "file_mapping": {
+        "0": {
+            "filepath": "/README.md",
+            "entry_id": 0,
+            "language_id": "plain-text"
+        },
+        "1": {
+            "filepath": "/efficient_net_example.py",
+            "entry_id": 14,
+            "language_id": "python"
+        },
+        "2": {
+            "filepath": "/examples/rtx1_example.py",
+            "entry_id": 18,
+            "language_id": "python"
+        },
+        "3": {
+            "filepath": "/examples/rtx1_pretrained_example.py",
+            "entry_id": 22,
+            "language_id": "python"
+        },
+        "4": {
+            "filepath": "/examples/rtx2_example.py",
+            "entry_id": 26,
+            "language_id": "python"
+        },
+        "5": {
+            "filepath": "/pyproject.toml",
+            "entry_id": 30,
+            "language_id": "toml"
+        },
+        "6": {
+            "filepath": "/requirements.txt",
+            "entry_id": 36,
+            "language_id": "plain-text"
+        },
+        "7": {
+            "filepath": "/rtx/__init__.py",
+            "entry_id": 40,
+            "language_id": "python"
+        },
+        "8": {
+            "filepath": "/rtx/data_util.py",
+            "entry_id": 44,
+            "language_id": "python"
+        },
+        "9": {
+            "filepath": "/rtx/efficient_net.py",
+            "entry_id": 54,
+            "language_id": "python"
+        },
+        "10": {
+            "filepath": "/rtx/rtx1.py",
+            "entry_id": 60,
+            "language_id": "python"
+        },
+        "11": {
+            "filepath": "/rtx/rtx2.py",
+            "entry_id": 118,
+            "language_id": "python"
+        },
+        "12": {
+            "filepath": "/run_example.py",
+            "entry_id": 128,
+            "language_id": "python"
+        },
+        "13": {
+            "filepath": "/tests.py",
+            "entry_id": 132,
+            "language_id": "python"
+        },
+        "14": {
+            "filepath": "/tests/test_data_utils.py",
+            "entry_id": 164,
+            "language_id": "python"
+        },
+        "15": {
+            "filepath": "/tests/test_rtx1.py",
+            "entry_id": 174,
+            "language_id": "python"
+        }
+    },
+    "project_name": "RT-X",
+    "split_count": 2
+}
