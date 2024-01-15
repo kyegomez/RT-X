@@ -214,9 +214,7 @@ def test_rtx1_train_with_invalid_inputs(rtx1_model):
             "please pass the butter",
         ]
         # Intentionally set an invalid shape for instructions
-        instructions = instructions[
-            :1
-        ]  # Instructions shape should be (2,)
+        instructions = instructions[:1]  # Instructions shape should be (2,)
         rtx1_model.train(video, instructions)
 
 
@@ -229,9 +227,7 @@ def test_rtx1_eval_with_invalid_inputs(rtx1_model):
             "please pass the butter",
         ]
         # Intentionally set an invalid shape for video
-        video = video[
-            :, :, :5
-        ]  # Video shape should be (2, 3, 6, 224, 224)
+        video = video[:, :, :5]  # Video shape should be (2, 3, 6, 224, 224)
         rtx1_model.run(video, instructions, cond_scale=3.0)
 
 
@@ -247,9 +243,7 @@ def test_rtx1_conditional_scaling(rtx1_model):
     eval_logits_without_scaling = rtx1_model.run(video, instructions)
 
     # Check if the logits with and without scaling are different
-    assert not torch.allclose(
-        eval_logits, eval_logits_without_scaling
-    )
+    assert not torch.allclose(eval_logits, eval_logits_without_scaling)
 
 
 # Test case to check if RTX1 handles model selection correctly
@@ -385,9 +379,7 @@ def test_rtx2_forward_pass(rtx2_model):
 def test_rtx2_forward_with_invalid_inputs(rtx2_model):
     with pytest.raises(Exception):
         img = torch.randn(1, 3, 256, 256)
-        text = torch.randn(
-            1, 1024, 512
-        )  # Invalid shape for text input
+        text = torch.randn(1, 1024, 512)  # Invalid shape for text input
         rtx2_model(img, text)
 
 
@@ -403,30 +395,16 @@ def test_rtx2_with_different_configs():
     for config in config_combinations:
         model = RTX2(**config)
         assert isinstance(model, RTX2)
-        assert (
-            model.encoder.attn_layers.depth == config["encoder_depth"]
-        )
-        assert (
-            model.decoder.attn_layers.depth == config["decoder_depth"]
-        )
+        assert model.encoder.attn_layers.depth == config["encoder_depth"]
+        assert model.decoder.attn_layers.depth == config["decoder_depth"]
         if "encoder_heads" in config:
-            assert (
-                model.encoder.attn_layers.heads
-                == config["encoder_heads"]
-            )
+            assert model.encoder.attn_layers.heads == config["encoder_heads"]
         if "decoder_heads" in config:
-            assert (
-                model.decoder.attn_layers.heads
-                == config["decoder_heads"]
-            )
+            assert model.decoder.attn_layers.heads == config["decoder_heads"]
         if "encoder_dim" in config:
-            assert (
-                model.encoder.attn_layers.dim == config["encoder_dim"]
-            )
+            assert model.encoder.attn_layers.dim == config["encoder_dim"]
         if "decoder_dim" in config:
-            assert (
-                model.decoder.attn_layers.dim == config["decoder_dim"]
-            )
+            assert model.decoder.attn_layers.dim == config["decoder_dim"]
 
 
 # Test case to check if RTX2 handles negative image size correctly
