@@ -7,4 +7,4 @@ olefile ==0.47
 einops ==0.7.0
 efficientnet_pytorch==0.7.1
 zetascale ==1.2.5
-classifier-free-guidance-pytorch ==0.5.1
+classifier-free-guidance-pytorch ==0.5.2
