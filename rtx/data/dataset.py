@@ -133,7 +133,7 @@ def get_single_oxe_dataset(name: str = "fractal20220817_data", data_dir: str = "
                 primary=(224, 224),
             ),
             num_parallel_calls=30,
-        ),)
+        ),).flatten().shuffle(buffer_size=100)
 
 def get_oxe_dataset(name: str = "fractal20220817_data") -> DLataset:
     if name in DATASET_MIXES:

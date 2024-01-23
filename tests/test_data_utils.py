@@ -4,7 +4,7 @@ import numpy as np
 import torch
 from PIL import Image
 
-from rtx.data_util import describe, format_imgs, preprocess
+from rtx.data.util import describe, format_imgs, preprocess
 
 
 def test_describe():

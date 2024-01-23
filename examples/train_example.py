@@ -22,7 +22,7 @@ def run(model: torch.nn.Module, action_tokenizer):
     writer = SummaryWriter()
     dataset = get_oxe_dataset(FLAGS.dataset_name)
  
-    pytorch_dataset = TorchRLDSDataset(dataset.flatten().shuffle(buffer_size=100))
+    pytorch_dataset = TorchRLDSDataset(dataset)
     dataloader = DataLoader(
         pytorch_dataset,
         batch_size=FLAGS.batch_size,
