@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from rtx.data.util import write_dict_to
 from rtx.data.dataset import get_oxe_dataset, TorchRLDSDataset
 from tensorboardX import SummaryWriter
-from PIL import Image
+import os
 # tf.config.set_visible_devices([], "GPU")
 
 FLAGS = flags.FLAGS
@@ -48,12 +48,12 @@ def run(model: torch.nn.Module, action_tokenizer):
             optimizer.step()
             writer.add_scalar('loss', loss, step_num)
             
-            # if (i+1) % 10 == 0:
+            if (i+1) % 10 == 0:
                 # writer.add_image('last img first sample', sample['observation']['image_primary'][0,-1,:,:,:].numpy(), step_num)
-                # write_dict_to('last action first sample', writer, {'act': sample['action'][0,-1,:]} , step_num)
-                # writer.add_text('instruction first sample', sample['language_instruction'][0], step_num)
-                # break
+                write_dict_to('last action first batch sample', writer, {'act': sample['action'][0,-1,:]} , step_num)
+                writer.add_text('instruction first batch sample', sample['language_instruction'][0], step_num)
             step_num += 1
 
         # save model
-        torch.save(model.state_dict(), f'checkpoints/{FLAGS.model}_{FLAGS.dataset_name}_steps{step_num}.pt')
+        os.makedirs('checkpoints', exist_ok=True)
+        torch.save(model.state_dict(), f'checkpoints/{FLAGS.model}_{FLAGS.dataset_name}_step{step_num}.pt')
