@@ -50,8 +50,8 @@ def run(model: torch.nn.Module, action_tokenizer):
             
             if (i+1) % 10 == 0:
                 # writer.add_image('last img first sample', sample['observation']['image_primary'][0,-1,:,:,:].numpy(), step_num)
-                write_dict_to('last action first batch sample', writer, {'act': sample['action'][0,-1,:]} , step_num)
-                writer.add_text('instruction first batch sample', sample['language_instruction'][0], step_num)
+                write_dict_to('last_action_first_batch_sample', writer, {'act': sample['action'][0,-1,:]} , step_num)
+                writer.add_text('instruction_first_batch_sample', sample['language_instruction'][0], step_num)
             step_num += 1
 
         # save model
