@@ -793,6 +793,8 @@ class RT1(nn.Module):
             depth=config.depth,
         )
 
+        self.norm = nn.LayerNorm(config.embed_dim)
+
         self.cond_drop_prob = config.cond_drop_prob
 
         self.to_logits = nn.Sequential(
