@@ -1,7 +1,9 @@
-from examples import rtx1_example, rtx2_example, train_example
+from examples import rtx1_example, train_example
 from rtx import RTX1, RTX2
 from rtx.rtx1 import FilmViTConfig
 from absl import app, flags, logging
+
+from . import rtx2_example
 
 REGISTRY = {
     "rtx1": RTX1,
