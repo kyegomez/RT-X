@@ -1,6 +1,5 @@
 from functools import partial
 import torch
-import torch.nn.functional as F
 from torch import nn, einsum, Tensor
 from typing import List, Optional, Callable, Tuple
 
@@ -63,21 +62,11 @@ class Residual(nn.Module):
         return self.fn(x) + x
 
 
-class LayerNorm(nn.Module):
-    def __init__(self, dim):
-        super().__init__()
-        self.gamma = nn.Parameter(torch.ones(dim))
-        self.register_buffer("beta", torch.zeros(dim))
-
-    def forward(self, x):
-        return F.layer_norm(x, x.shape[-1:], self.gamma, self.beta)
-
-
 class FeedForward(nn.Module):
     def __init__(self, dim, mult=4, dropout=0.0):
         super().__init__()
         inner_dim = int(dim * mult)
-        self.norm = LayerNorm(dim)
+        self.norm = nn.LayerNorm(dim)
 
         self.net = nn.Sequential(
             nn.Linear(dim, inner_dim),
@@ -195,7 +184,7 @@ class Attention(nn.Module):
             dim % dim_head
         ) == 0, "dimension should be divisible by dimension per head"
 
-        self.norm = LayerNorm(dim)
+        self.norm = nn.LayerNorm(dim)
 
         self.heads = dim // dim_head
         self.scale = dim_head**-0.5
@@ -492,7 +481,7 @@ class FilmMaxVit(nn.Module):
 
         self.mlp_head = nn.Sequential(
             Reduce("b d h w -> b d", "mean"),
-            LayerNorm(self.embed_dim),
+            nn.LayerNorm(self.embed_dim),
             nn.Linear(self.embed_dim, config.num_classes, bias=False),
         )
 
@@ -545,8 +534,8 @@ class TransformerAttention(nn.Module):
 
         dim_context = default(dim_context, dim)
 
-        self.norm = LayerNorm(dim)
-        self.context_norm = LayerNorm(dim_context) if norm_context else nn.Identity()
+        self.norm = nn.LayerNorm(dim)
+        self.context_norm = nn.LayerNorm(dim_context) if norm_context else nn.Identity()
 
         self.attn_dropout = nn.Dropout(dropout)
 
@@ -612,7 +601,6 @@ class TransformerAttention(nn.Module):
         return self.to_out(out)
 
 
-# @beartype
 class Transformer(nn.Module):
     def __init__(
         self,
@@ -625,6 +613,8 @@ class Transformer(nn.Module):
     ):
         super().__init__()
         self.layers = nn.ModuleList([])
+        self.norm = nn.LayerNorm(dim)
+
         for _ in range(depth):
             self.layers.append(
                 nn.ModuleList(
@@ -644,17 +634,17 @@ class Transformer(nn.Module):
         attn_mask=None,
     ):
         cond_fns = iter(default(cond_fns, []))
-
+        x = self.norm(x)
         for attn, ff in self.layers:
             x = (
                 attn(
-                    x,
+                    self.norm(x),
                     attn_mask=attn_mask,
                     cond_fn=next(cond_fns, None),
                 )
                 + x
             )
-            x = ff(x, cond_fn=next(cond_fns, None)) + x
+            x = ff(self.norm(x), cond_fn=next(cond_fns, None)) + x
         return x
 
 
@@ -798,7 +788,7 @@ class RT1(nn.Module):
         self.cond_drop_prob = config.cond_drop_prob
 
         self.to_logits = nn.Sequential(
-            LayerNorm(vit.embed_dim),
+            nn.LayerNorm(vit.embed_dim),
             nn.Linear(vit.embed_dim, config.num_actions * config.action_bins),
             Rearrange("... (a b) -> ... a b", b=config.action_bins),
         )

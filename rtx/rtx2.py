@@ -101,24 +101,23 @@ class RTX2(torch.nn.Module):
                 attn_flash=attn_flash,
                 qk_norm=qk_norm,
                 *args,
-                **kwargs
+                **kwargs,
             ),
         )
 
         # autoregressive wrapper to enable generation of tokens
         self.decoder = AutoregressiveWrapper(self.decoder)
-        
+
         # Norm
         self.norm = nn.LayerNorm(encoder_dim)
-        
-        
+
     def forward(self, img: torch.Tensor, text: torch.Tensor):
         """Forward pass of the model."""
         try:
             encoded = self.encoder(img, return_embeddings=True)
             encoded = self.norm(encoded)
             encoded = self.norm(encoded)
-                
+
             return self.decoder(text, context=encoded)
         except Exception as error:
             print(f"Failed in forward method: {error}")
