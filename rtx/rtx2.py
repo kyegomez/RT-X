@@ -100,6 +100,8 @@ class RTX2(torch.nn.Module):
                 attn_kv_heads=attn_kv_heads,
                 attn_flash=attn_flash,
                 qk_norm=qk_norm,
+                *args,
+                **kwargs
             ),
         )
 
@@ -107,7 +109,7 @@ class RTX2(torch.nn.Module):
         self.decoder = AutoregressiveWrapper(self.decoder)
         
         # Norm
-        self.norm = nn.LayerNorm(self.encoder_dim)
+        self.norm = nn.LayerNorm(encoder_dim)
         
         
     def forward(self, img: torch.Tensor, text: torch.Tensor):
