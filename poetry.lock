@@ -465,13 +465,13 @@ files = [
 
 [[package]]
 name = "classifier-free-guidance-pytorch"
-version = "0.5.2"
+version = "0.5.3"
 description = "Classifier Free Guidance - Pytorch"
 optional = false
 python-versions = "*"
 files = [
-    {file = "classifier-free-guidance-pytorch-0.5.2.tar.gz", hash = "sha256:7d48983ce8e83555bdd63d0da3bdc6351678e6c795228c66163ce3e2410fc02b"},
-    {file = "classifier_free_guidance_pytorch-0.5.2-py3-none-any.whl", hash = "sha256:3aed54038c9befc6a2adaa56e92fd6bf1581a19e7caa24296857b5e86021725e"},
+    {file = "classifier-free-guidance-pytorch-0.5.3.tar.gz", hash = "sha256:dd30750fe63000d811c827f6b317058b7b14c83be3a5a2be6bb3a4889aab032c"},
+    {file = "classifier_free_guidance_pytorch-0.5.3-py3-none-any.whl", hash = "sha256:d0c6560e68647d2b54e41e5868918b3823b79cd3902a0d1f209ef6182ce47e17"},
 ]
 
 [package.dependencies]
@@ -3763,4 +3763,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "70c1db6b79f03d0808b457fdfb527d9c153f2ba68b84c2deef01c473def5d603"
+content-hash = "51ea314954aaa1043553fbb4979a290aebb6a7253581aa76dca2a0029c7109b8"
