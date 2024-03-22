@@ -1,0 +1,20 @@
+{
+    "summary": "The code tests RTX1 model layers, evaluates logits with a condition scale of 3, and asserts shape equality. It is instantiated with video and instructions and wrapped in a conditional statement.",
+    "details": [
+        {
+            "comment": "The code imports necessary libraries and defines a test class for testing the RTX1 model. The setUp method initializes variables, creates instances of RTX1 and pretrained RTX1 models, and defines expected logits shape. It then sets up a test to check if default pretrained RTX1 has the same shape as the non-pretrained one.",
+            "location": "\"/media/root/Prima/works/RT-X/docs/src/tests/test_rtx1.py\":0-37",
+            "content": "import unittest\nimport torch\nfrom rtx.rtx1 import RTX1, FilmViTConfig, RT1Config\nclass RTX1Test(unittest.TestCase):\n    def setUp(self):\n        self.batch_size = 2\n        self.num_frames = 6\n        self.num_actions = 11\n        self.num_action_bins = 256\n        self.video = torch.randn(\n            self.batch_size, 3, self.num_frames, 224, 224\n        )\n        self.instructions = [\n            \"bring me that apple sitting on the table\",\n            \"please pass the butter\",\n        ]\n        rt1_config = RT1Config(\n            num_actions=self.num_actions,\n            action_bins=self.num_action_bins,\n        )\n        self.rtx1 = RTX1(rt1_config)\n        self.rtx1_pretrained = RTX1(\n            rt1_config, FilmViTConfig(pretrained=True)\n        )\n        self.expected_logits_shape = torch.Size(\n            [\n                self.batch_size,\n                self.num_frames,\n                self.num_actions,\n                self.num_action_bins,\n            ]\n        )\n    def test_default_pretrained_has_same_shape(self):"
+        },
+        {
+            "comment": "This code tests the equality of layers in both rtx1 and pretrained rtx1 models, ensures that train and eval logits shapes match expected values, and checks if the eval logits are computed correctly with a conditional scale of 3.",
+            "location": "\"/media/root/Prima/works/RT-X/docs/src/tests/test_rtx1.py\":38-66",
+            "content": "        # Tests the general shape as the pretrained version from pytorch has\n        # different layernorm and conv2dnorm implementations.\n        assert len(self.rtx1.vit.layers) == len(\n            self.rtx1_pretrained.vit.layers\n        )\n    def test_default_train_eval(self):\n        train_logits = self.rtx1.train(self.video, self.instructions)\n        assert train_logits.shape == self.expected_logits_shape\n        self.rtx1.model.eval()\n        # compute the eval logits with a conditional scale of 3\n        eval_logits = self.rtx1.run(\n            self.video, self.instructions, cond_scale=3.0\n        )\n        assert eval_logits.shape == self.expected_logits_shape\n    def test_pretrained_train_eval(self):\n        train_logits = self.rtx1_pretrained.train(\n            self.video, self.instructions\n        )\n        assert train_logits.shape == self.expected_logits_shape\n        self.rtx1.model.eval()\n        # compute the eval logits with a conditional scale of 3\n        eval_logits = self.rtx1_pretrained.run("
+        },
+        {
+            "comment": "This code is instantiating an object with video and instructions, setting condition scale to 3.0, and asserting the shape of eval_logits matches the expected logits shape. The code block is wrapped inside a conditional statement ensuring it only runs if the file is run directly as a script, and includes a unit test main function call.",
+            "location": "\"/media/root/Prima/works/RT-X/docs/src/tests/test_rtx1.py\":67-73",
+            "content": "            self.video, self.instructions, cond_scale=3.0\n        )\n        assert eval_logits.shape == self.expected_logits_shape\nif __name__ == \"__main__\":\n    unittest.main()"
+        }
+    ]
+}

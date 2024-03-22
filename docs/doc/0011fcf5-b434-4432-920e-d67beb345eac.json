@@ -1,0 +1,10 @@
+{
+    "summary": "This code imports necessary libraries and utilizes an RTX1 model to process video frames and instructions for training and evaluation. It then prints the shape of the computed eval logits.",
+    "details": [
+        {
+            "comment": "This code imports necessary libraries and utilizes an RTX1 model to process video frames and instructions for training and evaluation. It then prints the shape of the computed eval logits.",
+            "location": "\"/media/root/Prima/works/RT-X/docs/src/examples/rtx1_example.py\":0-26",
+            "content": "import torch\nfrom rtx import RTX1\ndef run():\n    model = RTX1()\n    video = torch.randn(2, 3, 6, 224, 224)\n    instructions = [\n        \"bring me that apple sitting on the table\",\n        \"please pass the butter\",\n    ]\n    # compute the train logits\n    train_logits = model.train(video, instructions)\n    # set the model to evaluation mode\n    model.model.eval()\n    # compute the eval logits with a conditional scale of 3\n    eval_logits = model.run(video, instructions, cond_scale=3.0)\n    print(eval_logits.shape)\nif __name__ == \"__main__\":\n    run()"
+        }
+    ]
+}

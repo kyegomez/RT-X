@@ -1,0 +1,10 @@
+{
+    "summary": "Code imports Torch and RTX2 library, initializes an image and text data, creates a model instance, passes the inputs to the model for inference, and prints the output. This is an example of using RTX2 for image and text processing with TensorFlow on RT-X hardware.",
+    "details": [
+        {
+            "comment": "Code imports Torch and RTX2 library, initializes an image and text data, creates a model instance, passes the inputs to the model for inference, and prints the output. This is an example of using RTX2 for image and text processing with TensorFlow on RT-X hardware.",
+            "location": "\"/media/root/Prima/works/RT-X/docs/src/examples/rtx2_example.py\":0-15",
+            "content": "import torch\nfrom rtx import RTX2\ndef run():\n    # usage\n    img = torch.randn(1, 3, 256, 256)\n    text = torch.randint(0, 20000, (1, 1024))\n    model = RTX2()\n    output = model(img, text)\n    print(output)\nif __name__ == \"__main__\":\n    run()"
+        }
+    ]
+}

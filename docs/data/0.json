@@ -1,0 +1,541 @@
+{
+    "0": {
+        "file_id": 0,
+        "content": "/README.md",
+        "type": "filepath"
+    },
+    "1": {
+        "file_id": 0,
+        "content": "RT-X is a Pytorch implementation of RT-1 and RT-2 models, offering RTX-1 and RTX-2 architectures, supporting 7D vector output, installable via pip, and requiring cloning repository for testing. The code snippet covers integrating EfficientNetFilm into RTX-1, creating training scripts, using HuggingFace's RTX-2 dataset, and checking project board tasks.",
+        "type": "summary"
+    },
+    "2": {
+        "file_id": 0,
+        "content": "[![Multi-Modality](agorabanner.png)](https://discord.gg/qUtxnK2NMf)\n# RT-X\nPytorch implementation of the models RT-1-X and RT-2-X from the paper: \"Open X-Embodiment: Robotic Learning Datasets and RT-X Models\".\nHere we implement both model architectures, RTX-1 and RTX-2\n[Paper Link](https://robotics-transformer-x.github.io/)\n- The RTX-2 Implementation does not natively output for simplicity a 7 dimensional vector but rather text tokens, if you wanted to output 7 dimensional vector you could implement the same token learner as in RTX1\n# Appreciation\n* Lucidrains\n* Agorians\n# Install\n`pip install rtx-torch `\n# Usage\n## RTX1\n- RTX1 Usage takes in text and videos\n- Does not use Efficient Net yet, we're integrating it now then the implementation will be complete\n- Uses SOTA transformer architecture\n```python\nimport torch\nfrom rtx.rtx1 import RTX1\nmodel = RTX1()\nvideo = torch.randn(2, 3, 6, 224, 224)\ninstructions = [\"bring me that apple sitting on the table\", \"please pass the butter\"]\n# compute the train logits\ntrain_logits = model.train(video, instructions)",
+        "type": "code",
+        "location": "/README.md:1-39"
+    },
+    "3": {
+        "file_id": 0,
+        "content": "RT-X is a Pytorch implementation of the RT-1-X and RT-2-X models from the \"Open X-Embodiment\" paper. It features RTX-1 and RTX-2 model architectures. The RTX-2 output is text tokens, but can be modified for 7D vector output like RTX-1. Install with `pip install rtx-torch` and use the RTX1 by providing text and video inputs to train the model. Efficient Net integration is ongoing.",
+        "type": "comment"
+    },
+    "4": {
+        "file_id": 0,
+        "content": "# set the model to evaluation mode\nmodel.model.eval()\n# compute the eval logits with a conditional scale of 3\neval_logits = model.run(video, instructions, cond_scale=3.0)\nprint(eval_logits.shape)\n```\n## RTX-2\n- RTX-2 takes in images and text and interleaves them to form multi-modal sentences and outputs text tokens not a 7 dimensional vector of x,y,z,roll,pitch,yaw,and gripper\n```python\nimport torch\nfrom rtx import RTX2\n# usage\nimg = torch.randn(1, 3, 256, 256)\ntext = torch.randint(0, 20000, (1, 1024))\nmodel = RTX2()\noutput = model(img, text)\nprint(output)\n```\n## EfficientNetFilm\n- Extracts the feature from the given image\n```python\nfrom rtx import EfficientNetFilm\nmodel = EfficientNetFilm(\"efficientnet-b0\", 10)\nout = model(\"img.jpeg\")\n```\n# Model Differences from the Paper Implementation\n## RT-1\nThe main difference here is the substitution of a Film-EfficientNet backbone (pre-trained EfficientNet-B3 with Film layers inserted) with a MaxViT model.\n# Tests\nI created a single tests file that uses pytest to run tests",
+        "type": "code",
+        "location": "/README.md:41-85"
+    },
+    "5": {
+        "file_id": 0,
+        "content": "In this code, the model is set to evaluation mode and computes eval logits using a conditional scale of 3. The shape of the resulting eval_logits is then printed.",
+        "type": "comment"
+    },
+    "6": {
+        "file_id": 0,
+        "content": " on all the modules, RTX1, RTX2, EfficientNetFil, first git clone and get into the repository, install the requirements.txt with pip then run this:\n`pytest tests.py`\n# License\nMIT\n# Citations\n```bibtex\n@misc{open_x_embodiment_rt_x_2023,\ntitle={Open {X-E}mbodiment: Robotic Learning Datasets and {RT-X} Models},\nauthor = {Open X-Embodiment Collaboration and Abhishek Padalkar and Acorn Pooley and Ajinkya Jain and Alex Bewley and Alex Herzog and Alex Irpan and Alexander Khazatsky and Anant Rai and Anikait Singh and Anthony Brohan and Antonin Raffin and Ayzaan Wahid and Ben Burgess-Limerick and Beomjoon Kim and Bernhard Schölkopf and Brian Ichter and Cewu Lu and Charles Xu and Chelsea Finn and Chenfeng Xu and Cheng Chi and Chenguang Huang and Christine Chan and Chuer Pan and Chuyuan Fu and Coline Devin and Danny Driess and Deepak Pathak and Dhruv Shah and Dieter Büchler and Dmitry Kalashnikov and Dorsa Sadigh and Edward Johns and Federico Ceola and Fei Xia and Freek Stulp and Gaoyue Zhou and Gaurav ",
+        "type": "code",
+        "location": "/README.md:85-96"
+    },
+    "7": {
+        "file_id": 0,
+        "content": "This code provides instructions to run tests on the RT-X modules, RTX1 and RTX2, along with EfficientNetFil. It also mentions the license and citation information for the Open X-Embodiment project. To execute the tests, clone the repository, install requirements using pip, and then run `pytest tests.py`.",
+        "type": "comment"
+    },
+    "8": {
+        "file_id": 0,
+        "content": "S. Sukhatme and Gautam Salhotra and Ge Yan and Giulio Schiavi and Hao Su and Hao-Shu Fang and Haochen Shi and Heni Ben Amor and Henrik I Christensen and Hiroki Furuta and Homer Walke and Hongjie Fang and Igor Mordatch and Ilija Radosavovic and Isabel Leal and Jacky Liang and Jaehyung Kim and Jan Schneider and Jasmine Hsu and Jeannette Bohg and Jeffrey Bingham and Jiajun Wu and Jialin Wu and Jianlan Luo and Jiayuan Gu and Jie Tan and Jihoon Oh and Jitendra Malik and Jonathan Tompson and Jonathan Yang and Joseph J. Lim and João Silvério and Junhyek Han and Kanishka Rao and Karl Pertsch and Karol Hausman and Keegan Go and Keerthana Gopalakrishnan and Ken Goldberg and Kendra Byrne and Kenneth Oslund and Kento Kawaharazuka and Kevin Zhang and Keyvan Majd and Krishan Rana and Krishnan Srinivasan and Lawrence Yunliang Chen and Lerrel Pinto and Liam Tan and Lionel Ott and Lisa Lee and Masayoshi Tomizuka and Maximilian Du and Michael Ahn and Mingtong Zhang and Mingyu Ding and Mohan Kumar Sriram",
+        "type": "code",
+        "location": "/README.md:96-96"
+    },
+    "9": {
+        "file_id": 0,
+        "content": "This code appears to be a list of authors for a scientific paper or project, potentially in alphabetical order by last name. The names are separated by \"and\" and there's no clear indication that this is part of a larger codebase.",
+        "type": "comment"
+    },
+    "10": {
+        "file_id": 0,
+        "content": "a and Mohit Sharma and Moo Jin Kim and Naoaki Kanazawa and Nicklas Hansen and Nicolas Heess and Nikhil J Joshi and Niko Suenderhauf and Norman Di Palo and Nur Muhammad Mahi Shafiullah and Oier Mees and Oliver Kroemer and Pannag R Sanketi and Paul Wohlhart and Peng Xu and Pierre Sermanet and Priya Sundaresan and Quan Vuong and Rafael Rafailov and Ran Tian and Ria Doshi and Roberto Martín-Martín and Russell Mendonca and Rutav Shah and Ryan Hoque and Ryan Julian and Samuel Bustamante and Sean Kirmani and Sergey Levine and Sherry Moore and Shikhar Bahl and Shivin Dass and Shuran Song and Sichun Xu and Siddhant Haldar and Simeon Adebola and Simon Guist and Soroush Nasiriany and Stefan Schaal and Stefan Welker and Stephen Tian and Sudeep Dasari and Suneel Belkhale and Takayuki Osa and Tatsuya Harada and Tatsuya Matsushima and Ted Xiao and Tianhe Yu and Tianli Ding and Todor Davchev and Tony Z. Zhao and Travis Armstrong and Trevor Darrell and Vidhi Jain and Vincent Vanhoucke and Wei Zhan and ",
+        "type": "code",
+        "location": "/README.md:96-96"
+    },
+    "11": {
+        "file_id": 0,
+        "content": "The code snippet contains a list of authors' names separated by 'and', possibly used to acknowledge contributions or credits in a research paper, project documentation, or a similar context.",
+        "type": "comment"
+    },
+    "12": {
+        "file_id": 0,
+        "content": "Wenxuan Zhou and Wolfram Burgard and Xi Chen and Xiaolong Wang and Xinghao Zhu and Xuanlin Li and Yao Lu and Yevgen Chebotar and Yifan Zhou and Yifeng Zhu and Ying Xu and Yixuan Wang and Yonatan Bisk and Yoonyoung Cho and Youngwoon Lee and Yuchen Cui and Yueh-hua Wu and Yujin Tang and Yuke Zhu and Yunzhu Li and Yusuke Iwasawa and Yutaka Matsuo and Zhuo Xu and Zichen Jeff Cui},\nhowpublished  = {\\url{https://arxiv.org/abs/2310.08864}},\nyear = {2023},\n}\n```\n# Todo\n- Integrate EfficientNetFilm with RTX-1\n- Create training script for RTX-1 by unrolling observations and do basic cross entropy in first rt-1\n- Use RTX-2 dataset on huggingface\n- [Check out the project board for more tasks](https://github.com/users/kyegomez/projects/10/views/1)",
+        "type": "code",
+        "location": "/README.md:96-106"
+    },
+    "13": {
+        "file_id": 0,
+        "content": "Integrating EfficientNetFilm into RTX-1, creating training script for basic cross entropy in first rt-1, using RTX-2 dataset from huggingface, and checking the project board for more tasks.",
+        "type": "comment"
+    },
+    "14": {
+        "file_id": 1,
+        "content": "/efficient_net_example.py",
+        "type": "filepath"
+    },
+    "15": {
+        "file_id": 1,
+        "content": "This code imports the EfficientNetFilm model from the rtx package and instantiates an instance of it with the \"efficientnet-b0\" name and a target size of 10. The model is then used to process an image named \"img.jpeg\", and the result is stored in the variable out.",
+        "type": "summary"
+    },
+    "16": {
+        "file_id": 1,
+        "content": "from rtx.efficient_net import EfficientNetFilm\nmodel = EfficientNetFilm(\"efficientnet-b0\", 10)\nout = model(\"img.jpeg\")",
+        "type": "code",
+        "location": "/efficient_net_example.py:1-5"
+    },
+    "17": {
+        "file_id": 1,
+        "content": "This code imports the EfficientNetFilm model from the rtx package and instantiates an instance of it with the \"efficientnet-b0\" name and a target size of 10. The model is then used to process an image named \"img.jpeg\", and the result is stored in the variable out.",
+        "type": "comment"
+    },
+    "18": {
+        "file_id": 2,
+        "content": "/examples/rtx1_example.py",
+        "type": "filepath"
+    },
+    "19": {
+        "file_id": 2,
+        "content": "This code imports necessary libraries and utilizes an RTX1 model to process video frames and instructions for training and evaluation. It then prints the shape of the computed eval logits.",
+        "type": "summary"
+    },
+    "20": {
+        "file_id": 2,
+        "content": "import torch\nfrom rtx import RTX1\ndef run():\n    model = RTX1()\n    video = torch.randn(2, 3, 6, 224, 224)\n    instructions = [\n        \"bring me that apple sitting on the table\",\n        \"please pass the butter\",\n    ]\n    # compute the train logits\n    train_logits = model.train(video, instructions)\n    # set the model to evaluation mode\n    model.model.eval()\n    # compute the eval logits with a conditional scale of 3\n    eval_logits = model.run(video, instructions, cond_scale=3.0)\n    print(eval_logits.shape)\nif __name__ == \"__main__\":\n    run()",
+        "type": "code",
+        "location": "/examples/rtx1_example.py:1-27"
+    },
+    "21": {
+        "file_id": 2,
+        "content": "This code imports necessary libraries and utilizes an RTX1 model to process video frames and instructions for training and evaluation. It then prints the shape of the computed eval logits.",
+        "type": "comment"
+    },
+    "22": {
+        "file_id": 3,
+        "content": "/examples/rtx1_pretrained_example.py",
+        "type": "filepath"
+    },
+    "23": {
+        "file_id": 3,
+        "content": "This code imports necessary libraries and defines a function called `run()`. It uses RTX1 model with pretrained FilmViT configuration. It takes video input, instructions as input, computes train logits, sets the model to evaluation mode, computes eval logits with a conditional scale of 3, and prints the shape of eval_logits.",
+        "type": "summary"
+    },
+    "24": {
+        "file_id": 3,
+        "content": "import torch\nfrom rtx.rtx1 import RTX1, FilmViTConfig\ndef run():\n    model = RTX1(FilmViTConfig(pretrained=True))\n    video = torch.randn(2, 3, 6, 224, 224)\n    instructions = [\n        \"bring me that apple sitting on the table\",\n        \"please pass the butter\",\n    ]\n    # compute the train logits\n    train_logits = model.train(video, instructions)\n    # set the model to evaluation mode\n    model.model.eval()\n    # compute the eval logits with a conditional scale of 3\n    eval_logits = model.run(video, instructions, cond_scale=3.0)\n    print(eval_logits.shape)\nif __name__ == \"__main__\":\n    run()",
+        "type": "code",
+        "location": "/examples/rtx1_pretrained_example.py:1-27"
+    },
+    "25": {
+        "file_id": 3,
+        "content": "This code imports necessary libraries and defines a function called `run()`. It uses RTX1 model with pretrained FilmViT configuration. It takes video input, instructions as input, computes train logits, sets the model to evaluation mode, computes eval logits with a conditional scale of 3, and prints the shape of eval_logits.",
+        "type": "comment"
+    },
+    "26": {
+        "file_id": 4,
+        "content": "/examples/rtx2_example.py",
+        "type": "filepath"
+    },
+    "27": {
+        "file_id": 4,
+        "content": "Code imports Torch and RTX2 library, initializes an image and text data, creates a model instance, passes the inputs to the model for inference, and prints the output. This is an example of using RTX2 for image and text processing with TensorFlow on RT-X hardware.",
+        "type": "summary"
+    },
+    "28": {
+        "file_id": 4,
+        "content": "import torch\nfrom rtx import RTX2\ndef run():\n    # usage\n    img = torch.randn(1, 3, 256, 256)\n    text = torch.randint(0, 20000, (1, 1024))\n    model = RTX2()\n    output = model(img, text)\n    print(output)\nif __name__ == \"__main__\":\n    run()",
+        "type": "code",
+        "location": "/examples/rtx2_example.py:1-16"
+    },
+    "29": {
+        "file_id": 4,
+        "content": "Code imports Torch and RTX2 library, initializes an image and text data, creates a model instance, passes the inputs to the model for inference, and prints the output. This is an example of using RTX2 for image and text processing with TensorFlow on RT-X hardware.",
+        "type": "comment"
+    },
+    "30": {
+        "file_id": 5,
+        "content": "/pyproject.toml",
+        "type": "filepath"
+    },
+    "31": {
+        "file_id": 5,
+        "content": "This code configures a Poetry package for \"rtx-torch\" with dependencies, including PyTorch and EfficientNet PyTorch. It also sets up project linting, formatting, and type checking with Ruff and Black, targeting Python 3.8.",
+        "type": "summary"
+    },
+    "32": {
+        "file_id": 5,
+        "content": "[build-system]\nrequires = [\"poetry-core>=1.0.0\"]\nbuild-backend = \"poetry.core.masonry.api\"\n[tool.poetry]\nname = \"rtx-torch\"\nversion = \"0.1.0\"\ndescription = \"rtx - Pytorch\"\nlicense = \"MIT\"\nauthors = [\"Kye Gomez <kye@apac.ai>\"]\nhomepage = \"https://github.com/kyegomez/rt-x\"\ndocumentation = \"https://github.com/kyegomez/rt-x\"  # Replace if you have documentation.\nreadme = \"README.md\"  # Assuming you have a README.md\nrepository = \"https://github.com/kyegomez/rtx\"\nkeywords = [\"artificial intelligence\", \"deep learning\", \"optimizers\", \"Prompt Engineering\"]\nclassifiers = [\n    \"Development Status :: 4 - Beta\",\n    \"Intended Audience :: Developers\",\n    \"Topic :: Scientific/Engineering :: Artificial Intelligence\",\n    \"License :: OSI Approved :: MIT License\",\n    \"Programming Language :: Python :: 3.6\"\n]\npackages = [\n    { include = \"rtx\" },\n    { include = \"rtx/**/*.py\" },\n]\n[tool.poetry.dependencies]\npython = \"^3.8\"\ntorch = \"*\"\neinops = \"*\"\nefficientnet_pytorch = \"*\"\nzetascale = \"0.9.9\"\ntorchvision = \"*\"\nclassifier-free-guidance-pytorch = \"*\"",
+        "type": "code",
+        "location": "/pyproject.toml:1-36"
+    },
+    "33": {
+        "file_id": 5,
+        "content": "This code is a Poetry configuration for the \"rtx-torch\" package. It specifies the build system, package details, dependencies, and classifiers. The package uses Python 3.8 or higher, PyTorch, Einops, EfficientNet PyTorch, ZetaScale, Torchvision, and Classifier-free Guidance PyTorch. The repository is located at \"https://github.com/kyegomez/rtx\".",
+        "type": "comment"
+    },
+    "34": {
+        "file_id": 5,
+        "content": "[tool.poetry.group.lint.dependencies]\nruff = \">=0.0.249,<0.1.10\"\ntypes-toml = \"^0.10.8.1\"\ntypes-redis = \"^4.3.21.6\"\ntypes-pytz = \"^2023.3.0.0\"\nblack = \"^23.1.0\"\ntypes-chardet = \"^5.0.4.6\"\nmypy-protobuf = \"^3.0.0\"\n[tool.autopep8]\nmax_line_length = 70\nignore = \"E501,W6\"  # or [\"E501\", \"W6\"]\nin-place = true\nrecursive = true\naggressive = 3\n[tool.ruff]\nline-length = 70\n[tool.black]\nline-length = 70\ntarget-version = ['py38']\npreview = true",
+        "type": "code",
+        "location": "/pyproject.toml:40-63"
+    },
+    "35": {
+        "file_id": 5,
+        "content": "This code configures various tools for Python project linting, formatting, and type checking. It specifies dependencies for linting with Ruff, sets a line length of 70 characters, and uses Black for formatting with a target version of Python 3.8.",
+        "type": "comment"
+    },
+    "36": {
+        "file_id": 6,
+        "content": "/requirements.txt",
+        "type": "filepath"
+    },
+    "37": {
+        "file_id": 6,
+        "content": "The code lists required Python packages for the project: Torch (deep learning library), Einops (tensor operations library), EfficientNet PyTorch (pre-trained deep learning model), Torchvision (computer vision tools), and Pytest (testing framework). ZetaScale is also needed at version 0.8.3.",
+        "type": "summary"
+    },
+    "38": {
+        "file_id": 6,
+        "content": "torch\neinops\nefficientnet_pytorch\ntorchvision\npytest\nzetascale==0.8.3",
+        "type": "code",
+        "location": "/requirements.txt:1-6"
+    },
+    "39": {
+        "file_id": 6,
+        "content": "The code lists required Python packages for the project: Torch (deep learning library), Einops (tensor operations library), EfficientNet PyTorch (pre-trained deep learning model), Torchvision (computer vision tools), and Pytest (testing framework). ZetaScale is also needed at version 0.8.3.",
+        "type": "comment"
+    },
+    "40": {
+        "file_id": 7,
+        "content": "/rtx/__init__.py",
+        "type": "filepath"
+    },
+    "41": {
+        "file_id": 7,
+        "content": "Importing and defining the classes RTX2, RTX1, EfficientNetFilm from their respective modules and adding them to __all__ for easy access.",
+        "type": "summary"
+    },
+    "42": {
+        "file_id": 7,
+        "content": "from rtx.rtx2 import RTX2\nfrom rtx.rtx1 import RTX1\nfrom rtx.efficient_net import EfficientNetFilm\nfrom rtx.data_util import describe, format_imgs, preprocess\n__all__ = [\n    \"RTX2\",\n    \"RTX1\",\n    \"EfficientNetFilm\",\n    \"describe\",\n    \"format_imgs\",\n    \"preprocess\",\n]",
+        "type": "code",
+        "location": "/rtx/__init__.py:1-13"
+    },
+    "43": {
+        "file_id": 7,
+        "content": "Importing and defining the classes RTX2, RTX1, EfficientNetFilm from their respective modules and adding them to __all__ for easy access.",
+        "type": "comment"
+    },
+    "44": {
+        "file_id": 8,
+        "content": "/rtx/data_util.py",
+        "type": "filepath"
+    },
+    "45": {
+        "file_id": 8,
+        "content": "The \"describe\" function recursively checks a dictionary's structure, identifying its type and size. The \"preprocess\" function resizes images or removes None values from the input dictionary, with a nested \"format_imgs\" function for image resizing as numpy arrays.",
+        "type": "summary"
+    },
+    "46": {
+        "file_id": 8,
+        "content": "import io\nimport torch\nimport numpy as np\nfrom PIL import Image\ndef describe(dic, prefix=\"\"):\n    \"\"\"Useful to print out the structure of TF Record. ds.info can also be used\n        but it does not show lengths of lists and dicts.\n    Args:\n        dic (dict): Input\n        prefix (str, optional): Prefix used for nested indentation. Defaults to \"\".\n    \"\"\"\n    if not isinstance(dic, dict):\n        return\n    def describe_img(img: bytes):\n        img = Image.open(io.BytesIO(img))\n        return f\"{img.__class__.__name__} sz: { img.size}\"\n    for k, v in dic.items():\n        if isinstance(v, list):\n            list_type = \"\"\n            if len(v) > 0:\n                v_description = \"\"\n                if isinstance(v[0], torch.Tensor):\n                    v_description = (\n                        f\"({tuple(v[0].size())}, {v[0].dtype})\"\n                    )\n                elif isinstance(v[0], bytes):\n                    v_description = describe_img(v[0])\n                list_type = (\n                    f\"({v[0].__class__.__name__ }{v_description})\"",
+        "type": "code",
+        "location": "/rtx/data_util.py:1-34"
+    },
+    "47": {
+        "file_id": 8,
+        "content": "The function \"describe\" takes a dictionary as input and prints its structure. It recursively checks if the input is a dictionary, and if it's a list, it identifies its type and size. If it contains a tensor, it also shows the tensor's size and data type. If it's an image in bytes format, it opens and describes the image.",
+        "type": "comment"
+    },
+    "48": {
+        "file_id": 8,
+        "content": "                )\n            print(\n                f\"{prefix} {k}, {v.__class__.__name__}{list_type} sz:\"\n                f\" {len(v)}\"\n            )\n            if len(v) > 0:\n                describe(v[0], prefix + \"  \")\n        elif isinstance(v, dict):\n            print(\n                f\"{prefix} {k}, {v.__class__.__name__} sz:\"\n                f\" {len(v.items())}\"\n            )\n            describe(v, prefix + \"  \")\n        elif isinstance(v, bytes):\n            print(f\"{prefix} {k}, {describe_img( v)}\")\n        elif isinstance(v, str):\n            print(f\"{prefix} {k}, {v.__class__.__name__} v: {v}\")\n        else:\n            tensor_type = \"\"\n            if isinstance(v, torch.Tensor):\n                tensor_type = f\"({tuple(v[0].size())}, {v[0].dtype})\"\n            print(\n                f\"{prefix} {k}, {v.__class__.__name__} {tensor_type} \"\n            )\ndef preprocess(dic: any):\n    \"\"\"Remove nonetypes from a dict, convert images to numpy arrays and return.\n    Args:\n        dic (dict): Input.\n    Returns:",
+        "type": "code",
+        "location": "/rtx/data_util.py:35-69"
+    },
+    "49": {
+        "file_id": 8,
+        "content": "The code is part of a function named \"preprocess\" that takes a dictionary as input and performs various operations to remove nonetypes, convert images to numpy arrays, and returns the modified dictionary. It prints information about each key-value pair in the dictionary along with their types and sizes. The print statements are formatted using f-strings for readability. If a value is a dict, the function recursively calls itself on that value with an updated prefix. If the value is a tensor (torch.Tensor), it includes information about its shape and data type in the print statement. If the value is a string or bytes, it prints additional details accordingly.",
+        "type": "comment"
+    },
+    "50": {
+        "file_id": 8,
+        "content": "        dict: Output.\n    \"\"\"\n    if isinstance(dic, bytes):\n        img = Image.open(io.BytesIO(dic))\n        return np.array(img.resize((224, 224)))\n    if not isinstance(dic, dict):\n        return dic\n    to_remove = []\n    for k, v in dic.items():\n        if isinstance(v, list):\n            processed = []\n            for vv in v:\n                processed.append(preprocess(vv))\n            dic[k] = processed\n        elif v is None:\n            to_remove.append(k)\n        else:\n            dic[k] = preprocess(v)\n    for k in to_remove:\n        del dic[k]\n    return dic\ndef format_imgs(dic: any, sz: int):\n    \"\"\"Resizes images to sz as a numpy array.\n    Args:\n        dic (dict): Input.\n    Returns:\n        dict: Output.\n    \"\"\"\n    if isinstance(dic, bytes):\n        img = Image.open(io.BytesIO(dic))\n        return np.array(img.resize((sz, sz)))\n    if not isinstance(dic, dict):\n        return dic\n    for k, v in dic.items():\n        if isinstance(v, list):\n            for i in range(len(v)):\n                v[i] = format_imgs(v, sz)",
+        "type": "code",
+        "location": "/rtx/data_util.py:70-114"
+    },
+    "51": {
+        "file_id": 8,
+        "content": "The code defines a function `preprocess` that takes in an input (dictionary) and processes it by either resizing images or removing None values. If the input is not a dictionary, it returns the input as it is. The function also includes a nested `format_imgs` function which resizes images to the specified size as a numpy array.",
+        "type": "comment"
+    },
+    "52": {
+        "file_id": 8,
+        "content": "        else:\n            dic[k] = format_imgs(v, sz)\n    return dic",
+        "type": "code",
+        "location": "/rtx/data_util.py:115-117"
+    },
+    "53": {
+        "file_id": 8,
+        "content": "This code snippet is part of a function that takes in a dictionary as input. If the key already exists in the dictionary, it continues to the next iteration. Otherwise, it calls the \"format_imgs\" function with the value and size parameters, and assigns the returned value back to the same key in the dictionary. Finally, it returns the modified dictionary.",
+        "type": "comment"
+    },
+    "54": {
+        "file_id": 9,
+        "content": "/rtx/efficient_net.py",
+        "type": "filepath"
+    },
+    "55": {
+        "file_id": 9,
+        "content": "The code defines a class, `EfficientNetFilm`, which inherits from `nn.Module` and uses the EfficientNet model for feature extraction after applying image transformations using PIL and torchvision libraries. The `__call__` method takes an image path, applies transforms, extracts features, and prints shapes.",
+        "type": "summary"
+    },
+    "56": {
+        "file_id": 9,
+        "content": "from torch import nn\nfrom efficientnet_pytorch import EfficientNet\nfrom torchvision import transforms\nfrom PIL import Image\nclass EfficientNetFilm(nn.Module):\n    \"\"\"\n    EfficientNet with FiLM layer\n    Args:\n        model (str): EfficientNet model name\n        num_classes (int): Number of classes\n        num_features (int): Number of features to output from the model\n        resize (int): Size to resize the image to\n    Attributes:\n        model (EfficientNet): EfficientNet model\n        num_classes (int): Number of classes\n        num_features (int): Number of features to output from the model\n        resize (int): Size to resize the image to\n        transform (torchvision.transforms.Compose): Image transformations\n    Example:\n        >>> model = EfficientNetFilm('efficientnet-b0', 10)\n        >>> img = Image.open('img.jpeg')\n        >>> features = model(img)\n        >>> features.shape\n        torch.Size([1, 1280])\n    \"\"\"\n    def __init__(\n        self,\n        model,\n        num_classes,\n        num_features=1280,",
+        "type": "code",
+        "location": "/rtx/efficient_net.py:1-37"
+    },
+    "57": {
+        "file_id": 9,
+        "content": "This code defines a class called `EfficientNetFilm` which is a subclass of `nn.Module`. It uses the EfficientNet model from the 'efficientnet_pytorch' library, applies image transformations using PIL and torchvision libraries, and outputs a specified number of features from the model.",
+        "type": "comment"
+    },
+    "58": {
+        "file_id": 9,
+        "content": "        resize=224,\n    ):\n        super().__init__()\n        self.model = model\n        self.num_classes = num_classes\n        self.num_features = num_features\n        self.resize = resize\n        self.model = EfficientNet.from_pretrained(model)\n        self.transform = transforms.Compose(\n            [\n                transforms.Resize(resize),\n                transforms.ToTensor(),\n                transforms.Normalize(\n                    [0.485, 0.456, 0.406], [0.229, 0.224, 0.225]\n                ),\n            ]\n        )\n    def __call__(self, img: str):\n        \"\"\"\n        Extract the feature embeddings from the image\n        Args:\n            img (str): Path to image\n        \"\"\"\n        img = Image.open(img)\n        img = self.transform(img).unsqueeze(0)\n        print(img.shape)\n        features = self.model.extract_features(img)\n        print(features.shape)",
+        "type": "code",
+        "location": "/rtx/efficient_net.py:38-70"
+    },
+    "59": {
+        "file_id": 9,
+        "content": "This code defines a class that initializes an EfficientNet model and applies image transformations for feature extraction. The `__call__` method takes an image path, applies transforms, extracts features from the model, and prints the shapes of the images and features.",
+        "type": "comment"
+    },
+    "60": {
+        "file_id": 10,
+        "content": "/rtx/rtx1.py",
+        "type": "filepath"
+    },
+    "61": {
+        "file_id": 10,
+        "content": "The code constructs a deep learning model for image classification, utilizing ViT and MBConv layers. It incorporates activation functions, checks pretrained weights, and offers the option to use FilmMaxVit class based on configuration. The real-time video processing model uses ViT and RT1 with configurable options and train/eval methods.",
+        "type": "summary"
+    },
+    "62": {
+        "file_id": 10,
+        "content": "from functools import partial\nimport torch\nimport torch.nn.functional as F\nfrom torch import nn, einsum\nfrom typing import List, Optional, Callable, Tuple\nfrom beartype import beartype\nfrom einops import pack, unpack, repeat, reduce, rearrange\nfrom einops.layers.torch import Rearrange, Reduce\nfrom classifier_free_guidance_pytorch import (\n    TextConditioner as FilmTextConditioner,\n    AttentionTextConditioner as FilmAttentionTextConditioner,\n    classifier_free_guidance,\n)\n# helpers\ndef exists(val):\n    return val is not None\ndef default(val, d):\n    return val if exists(val) else d\ndef cast_tuple(val, length=1):\n    return val if isinstance(val, tuple) else ((val,) * length)\ndef pack_one(x, pattern):\n    return pack([x], pattern)\ndef unpack_one(x, ps, pattern):\n    return unpack(x, ps, pattern)[0]\n# sinusoidal positions\ndef posemb_sincos_1d(\n    seq, dim, temperature=10000, device=None, dtype=torch.float32\n):\n    n = torch.arange(seq, device=device)\n    omega = torch.arange(dim // 2, device=device) / (dim // 2 - 1)",
+        "type": "code",
+        "location": "/rtx/rtx1.py:1-47"
+    },
+    "63": {
+        "file_id": 10,
+        "content": "The code is importing necessary libraries and defines helper functions for packing and unpacking data, handling default values, and creating sinusoidal position embeddings. This section of the code also includes a function for generating sinusoidal position embeddings in 1D. The code imports specific conditioners from another module and uses the 'cast_tuple' function to handle tuples of various lengths.",
+        "type": "comment"
+    },
+    "64": {
+        "file_id": 10,
+        "content": "    omega = 1.0 / (temperature**omega)\n    n = n[:, None] * omega[None, :]\n    pos_emb = torch.cat((n.sin(), n.cos()), dim=1)\n    return pos_emb.type(dtype)\n# helper classes\nclass Residual(nn.Module):\n    def __init__(self, fn):\n        super().__init__()\n        self.fn = fn\n    def forward(self, x):\n        return self.fn(x) + x\nclass LayerNorm(nn.Module):\n    def __init__(self, dim):\n        super().__init__()\n        self.gamma = nn.Parameter(torch.ones(dim))\n        self.register_buffer(\"beta\", torch.zeros(dim))\n    def forward(self, x):\n        return F.layer_norm(x, x.shape[-1:], self.gamma, self.beta)\nclass FeedForward(nn.Module):\n    def __init__(self, dim, mult=4, dropout=0.0):\n        super().__init__()\n        inner_dim = int(dim * mult)\n        self.norm = LayerNorm(dim)\n        self.net = nn.Sequential(\n            nn.Linear(dim, inner_dim),\n            nn.GELU(),\n            nn.Dropout(dropout),\n            nn.Linear(inner_dim, dim),\n            nn.Dropout(dropout),\n        )\n    def forward(self, x, cond_fn=None):",
+        "type": "code",
+        "location": "/rtx/rtx1.py:48-91"
+    },
+    "65": {
+        "file_id": 10,
+        "content": "This code defines a Residual, LayerNorm, and FeedForward classes for neural network layers. The main function calculates position embeddings using trigonometric functions and returns it in the specified dtype.",
+        "type": "comment"
+    },
+    "66": {
+        "file_id": 10,
+        "content": "        x = self.norm(x)\n        if exists(cond_fn):\n            # adaptive layernorm\n            x = cond_fn(x)\n        return self.net(x)\n# MBConv\nclass SqueezeExcitation(nn.Module):\n    def __init__(self, dim, shrinkage_rate=0.25):\n        super().__init__()\n        hidden_dim = int(dim * shrinkage_rate)\n        self.gate = nn.Sequential(\n            Reduce(\"b c h w -> b c\", \"mean\"),\n            nn.Linear(dim, hidden_dim, bias=False),\n            nn.SiLU(),\n            nn.Linear(hidden_dim, dim, bias=False),\n            nn.Sigmoid(),\n            Rearrange(\"b c -> b c 1 1\"),\n        )\n    def forward(self, x):\n        return x * self.gate(x)\nclass MBConvResidual(nn.Module):\n    def __init__(self, fn, dropout=0.0):\n        super().__init__()\n        self.fn = fn\n        self.dropsample = Dropsample(dropout)\n    def forward(self, x):\n        out = self.fn(x)\n        out = self.dropsample(out)\n        return out + x\nclass Dropsample(nn.Module):\n    def __init__(self, prob=0):\n        super().__init__()\n        self.prob = prob",
+        "type": "code",
+        "location": "/rtx/rtx1.py:92-137"
+    },
+    "67": {
+        "file_id": 10,
+        "content": "The provided code defines two classes: SqueezeExcitation and MBConvResidual. The SqueezeExcitation class implements a squeeze-and-excitation module, which applies a gate to the input based on global context, reducing dimensionality before applying a sigmoid function to create the gate. The MBConvResidual class is a residual block using the function (fn) and DropSample layer to apply dropout if specified.",
+        "type": "comment"
+    },
+    "68": {
+        "file_id": 10,
+        "content": "    def forward(self, x):\n        device = x.device\n        if self.prob == 0.0 or (not self.training):\n            return x\n        keep_mask = (\n            torch.FloatTensor(\n                (x.shape[0], 1, 1, 1), device=device\n            ).uniform_()\n            > self.prob\n        )\n        return x * keep_mask / (1 - self.prob)\ndef MBConv(\n    dim_in,\n    dim_out,\n    *,\n    downsample,\n    expansion_rate=4,\n    shrinkage_rate=0.25,\n    dropout=0.0,\n):\n    hidden_dim = int(expansion_rate * dim_out)\n    stride = 2 if downsample else 1\n    net = nn.Sequential(\n        nn.Conv2d(dim_in, hidden_dim, 1),\n        nn.BatchNorm2d(hidden_dim),\n        nn.GELU(),\n        nn.Conv2d(\n            hidden_dim,\n            hidden_dim,\n            3,\n            stride=stride,\n            padding=1,\n            groups=hidden_dim,\n        ),\n        nn.BatchNorm2d(hidden_dim),\n        nn.GELU(),\n        SqueezeExcitation(hidden_dim, shrinkage_rate=shrinkage_rate),\n        nn.Conv2d(hidden_dim, dim_out, 1),\n        nn.BatchNorm2d(dim_out),",
+        "type": "code",
+        "location": "/rtx/rtx1.py:139-182"
+    },
+    "69": {
+        "file_id": 10,
+        "content": "The code defines a forward pass function for a neural network layer and a MBConv function that takes input and output dimensions, downsampling, expansion rate, shrinkage rate, and dropout rate as arguments. It creates a sequential model consisting of convolutional layers, batch normalization layers, GELU activation functions, and a SqueezeExcitation module.",
+        "type": "comment"
+    },
+    "70": {
+        "file_id": 10,
+        "content": "    )\n    if dim_in == dim_out and not downsample:\n        net = MBConvResidual(net, dropout=dropout)\n    return net\n# attention related classes\nclass Attention(nn.Module):\n    def __init__(self, dim, dim_head=32, dropout=0.0, window_size=7):\n        super().__init__()\n        assert (\n            dim % dim_head\n        ) == 0, \"dimension should be divisible by dimension per head\"\n        self.norm = LayerNorm(dim)\n        self.heads = dim // dim_head\n        self.scale = dim_head**-0.5\n        self.to_qkv = nn.Linear(dim, dim * 3, bias=False)\n        self.attend = nn.Sequential(\n            nn.Softmax(dim=-1), nn.Dropout(dropout)\n        )\n        self.to_out = nn.Sequential(\n            nn.Linear(dim, dim, bias=False), nn.Dropout(dropout)\n        )\n        # relative positional bias\n        self.rel_pos_bias = nn.Embedding(\n            (2 * window_size - 1) ** 2, self.heads\n        )\n        pos = torch.arange(window_size)\n        grid = torch.stack(torch.meshgrid(pos, pos, indexing=\"ij\"))\n        grid = rearrange(grid, \"c i j -> (i j) c\")",
+        "type": "code",
+        "location": "/rtx/rtx1.py:183-224"
+    },
+    "71": {
+        "file_id": 10,
+        "content": "The code defines a class named \"Attention\" for multi-head self-attention. It initializes layer normalization, splits the input into multiple heads, scales them, and passes through linear layers. It also includes softmax activation for attention scores, dropout regularization, and relative positional bias using an embedding layer.",
+        "type": "comment"
+    },
+    "72": {
+        "file_id": 10,
+        "content": "        rel_pos = rearrange(grid, \"i ... -> i 1 ...\") - rearrange(\n            grid, \"j ... -> 1 j ...\"\n        )\n        rel_pos += window_size - 1\n        rel_pos_indices = (\n            rel_pos * torch.tensor([2 * window_size - 1, 1])\n        ).sum(dim=-1)\n        self.register_buffer(\n            \"rel_pos_indices\", rel_pos_indices, persistent=False\n        )\n    def forward(self, x):\n        (\n            batch,\n            height,\n            width,\n            window_height,\n            window_width,\n            _,\n            device,\n            h,\n        ) = (\n            *x.shape,\n            x.device,\n            self.heads,\n        )\n        x = self.norm(x)\n        # flatten\n        x = rearrange(x, \"b x y w1 w2 d -> (b x y) (w1 w2) d\")\n        # project for queries, keys, values\n        q, k, v = self.to_qkv(x).chunk(3, dim=-1)\n        # split heads\n        q, k, v = map(\n            lambda t: rearrange(t, \"b n (h d ) -> b h n d\", h=h),\n            (q, k, v),\n        )\n        # scale\n        q = q * self.scale",
+        "type": "code",
+        "location": "/rtx/rtx1.py:225-272"
+    },
+    "73": {
+        "file_id": 10,
+        "content": "This code snippet is initializing the parameters for a multi-head attention layer in PyTorch. It rearranges input dimensions, projects input into queries (Q), keys (K), and values (V) matrices, splits the input into multiple heads, scales the Q matrix by a factor of 'self.scale', and performs some rearrangements on the K and V matrices. This is commonly used in transformer models for natural language processing tasks such as text classification or machine translation.",
+        "type": "comment"
+    },
+    "74": {
+        "file_id": 10,
+        "content": "        # sim\n        sim = einsum(\"b h i d, b h j d -> b h i j\", q, k)\n        # add positional bias\n        bias = self.rel_pos_bias(self.rel_pos_indices)\n        sim = sim + rearrange(bias, \"i j h -> h i j\")\n        # attention\n        attn = self.attend(sim)\n        # aggregate\n        out = einsum(\"b h i j, b h j d -> b h i d\", attn, v)\n        # merge heads\n        out = rearrange(\n            out,\n            \"b h (w1 w2) d -> b w1 w2 (h d)\",\n            w1=window_height,\n            w2=window_width,\n        )\n        # combine heads out\n        out = self.to_out(out)\n        return rearrange(\n            out, \"(b x y) ... -> b x y ...\", x=height, y=width\n        )\nclass FilmViTConfig:\n    \"\"\"Configuration class to store the configuration of a `FilmMaxVit`.\"\"\"\n    def __init__(\n        self,\n        num_classes=1000,  # 1000 for ImageNet\n        input_channels=3,\n        stem_channels_in=64,  # Number of stem channels\n        dim_head=32,  # Attention head dimension\n        block_channel_ins: List = [\n            64,",
+        "type": "code",
+        "location": "/rtx/rtx1.py:274-318"
+    },
+    "75": {
+        "file_id": 10,
+        "content": "This code appears to belong to a FilmMaxVit model, an image classification network. It seems to be performing attention-based feature extraction from input images and then rearranging the output for further processing or returning. The `FilmViTConfig` class is used to store the configuration settings for this particular model.",
+        "type": "comment"
+    },
+    "76": {
+        "file_id": 10,
+        "content": "            128,\n            256,\n            512,\n        ],  # Number of channels for each ViT block\n        block_layers=[\n            2,\n            2,\n            5,\n            2,\n        ],  # Number of layers for each ViT block\n        window_size=7,  # Partition size\n        mbconv_expansion_rate=4,\n        mbconv_shrinkage_rate=0.25,  # MBConv squeeze ratio\n        dropout=0.1,\n        norm_layer: nn.Module = None,\n        activation_layer=nn.GELU,\n        stochastic_depth_prob=0.2,\n        pretrained=False,\n    ):\n        \"\"\"\n        Constructs a MaxVit architecture with optional film layers from\n        `MaxVit: Multi-Axis Vision Transformer <https://arxiv.org/abs/2204.01697>`_.\n            Parameters\n            ----------\n            num_classes : int\n                Number of classes for the classification task\n            input_channels : int\n                Number of input channels\n            stem_channels_in : int\n                Number of stem channels\n            dim_head : int\n                Dimension of the head",
+        "type": "code",
+        "location": "/rtx/rtx1.py:319-350"
+    },
+    "77": {
+        "file_id": 10,
+        "content": "This code defines a function to construct a MaxVit architecture, which is a type of Vision Transformer. It takes parameters such as number of classes, input channels, and dimensions of the head, and returns an instance of the constructed network. The MaxVit architecture also includes optional film layers and options for dropout and normalization.",
+        "type": "comment"
+    },
+    "78": {
+        "file_id": 10,
+        "content": "            block_channel_ins : List\n                Number of channels for each ViT block\n            block_layers : List\n                Number of layers for each ViT block\n            window_size : int\n                Partition size\n            mbconv_expansion_rate : int\n                MBConv expansion rate\n            mbconv_shrinkage_rate : float\n                MBConv squeeze ratio\n            dropout : float\n                Dropout probability\n            norm_layer : nn.Module\n                Normalization layer\n            activation_layer : nn.Module\n                Activation layer\n            stochastic_depth_prob : float\n                Stochastic depth probability\n        \"\"\"\n        self.num_classes = num_classes\n        self.input_channels = input_channels\n        self.stem_channels_in = stem_channels_in\n        self.block_channel_ins = block_channel_ins\n        self.block_layers = block_layers\n        self.dim_head = dim_head\n        self.stem_channels_in = stem_channels_in\n        self.window_size = window_size",
+        "type": "code",
+        "location": "/rtx/rtx1.py:351-377"
+    },
+    "79": {
+        "file_id": 10,
+        "content": "This code defines a class with several parameters including the number of classes, input channels, block channel inputs and layers, window size, MBConv expansion rate and squeeze ratio, dropout probability, normalization layer, activation layer, and stochastic depth probability. The class likely represents a deep learning model for an image classification task using ViT blocks with MBConv layers.",
+        "type": "comment"
+    },
+    "80": {
+        "file_id": 10,
+        "content": "        self.mbconv_expansion_rate = mbconv_expansion_rate\n        self.mbconv_shrinkage_rate = mbconv_shrinkage_rate\n        self.dropout = dropout\n        self.norm_layer = norm_layer\n        if self.norm_layer is None:\n            self.norm_layer = partial(\n                nn.BatchNorm2d, eps=1e-3, momentum=0.99\n            )\n        self.activation_layer = activation_layer\n        self.pretrained = pretrained\n        self.stochastic_depth_prob = stochastic_depth_prob\nclass FilmMaxVit(nn.Module):\n    def __init__(\n        self,\n        config: FilmViTConfig,\n    ):\n        super().__init__()\n        assert isinstance(config.block_layers, tuple | list), (\n            \"depth needs to be tuple if integers indicating number of\"\n            \" transformer blocks at that stage\"\n        )\n        # List of number of input and output channels for each ViT block.\n        in_channels: List = [\n            config.stem_channels_in\n        ] + config.block_channel_ins[:-1]\n        out_channels: List = config.block_channel_ins",
+        "type": "code",
+        "location": "/rtx/rtx1.py:378-406"
+    },
+    "81": {
+        "file_id": 10,
+        "content": "The code initializes class attributes including expansion and shrinkage rates for MbConv, dropout rate, and a norm layer with default parameters if None is passed. It also sets the activation layer and checks if pretrained weights are used. Lastly, it checks the stochastic depth probability. The code then defines another class, FilmMaxVit, which takes in a FilmViTConfig object and initializes lists for input and output channel numbers for each ViT block based on the configuration.",
+        "type": "comment"
+    },
+    "82": {
+        "file_id": 10,
+        "content": "        # Condition after each layer starting with the input to the stem block.\n        self.cond_hidden_dims = [\n            config.stem_channels_in\n        ]  # Used by FilmTextConditioner\n        for block_in_channels, block_layers in zip(\n            out_channels, config.block_layers\n        ):\n            for _ in range(block_layers):\n                self.cond_hidden_dims.append(block_in_channels)\n        self.cond_hidden_dims = self.cond_hidden_dims[\n            :-1\n        ]  # Don't condition on last embedding.\n        self.embed_dim = out_channels[-1]\n        if config.pretrained:\n            from torchvision.models import maxvit_t, MaxVit_T_Weights\n            self._vit = maxvit_t(weights=MaxVit_T_Weights.DEFAULT)\n            self.conv_stem = self._vit.stem\n            self.mlp_head = self._vit.classifier\n            self.layers = nn.ModuleList([])\n            for block in self._vit.blocks:\n                for layer in block.layers:\n                    self.layers.append(layer)\n            return\n        # convolutional stem",
+        "type": "code",
+        "location": "/rtx/rtx1.py:408-434"
+    },
+    "83": {
+        "file_id": 10,
+        "content": "This code initializes the conditioned hidden dimensions and embed dimension for a model. It also checks if pretrained weights are used, and if so, it loads the Vision Transformer (ViT) model's stem, classifier, blocks, and layers. The purpose is to create an instance of the model with pre-initialized parameters.",
+        "type": "comment"
+    },
+    "84": {
+        "file_id": 10,
+        "content": "        self.conv_stem = nn.Sequential(\n            nn.Conv2d(\n                config.input_channels,\n                config.stem_channels_in,\n                3,\n                stride=2,\n                padding=1,\n            ),\n            nn.Conv2d(\n                config.stem_channels_in,\n                config.stem_channels_in,\n                3,\n                padding=1,\n            ),\n        )\n        self.layers = nn.ModuleList([])\n        for (\n            block_channels_in,\n            block_channels_out,\n            block_num_layers,\n        ) in zip(in_channels, out_channels, config.block_layers):\n            for i in range(block_num_layers):\n                layer_channels_in = (\n                    block_channels_in\n                    if i == 0\n                    else block_channels_out\n                )\n                layer = nn.Sequential(\n                    MBConv(\n                        layer_channels_in,\n                        block_channels_out,\n                        downsample=(i == 0),\n                        expansion_rate=config.mbconv_expansion_rate,",
+        "type": "code",
+        "location": "/rtx/rtx1.py:435-469"
+    },
+    "85": {
+        "file_id": 10,
+        "content": "This code initializes a deep learning model for image classification. It consists of a convolutional stem, followed by multiple blocks of MBConv layers with varying channels and downsampling options. The model's configuration is defined in the `config` object.",
+        "type": "comment"
+    },
+    "86": {
+        "file_id": 10,
+        "content": "                        shrinkage_rate=config.mbconv_shrinkage_rate,\n                    ),\n                    Rearrange(\n                        \"b d (x w1) (y w2) -> b x y w1 w2 d\",\n                        w1=config.window_size,\n                        w2=config.window_size,\n                    ),  # block-like attention\n                    Residual(\n                        Attention(\n                            dim=block_channels_out,\n                            dim_head=config.dim_head,\n                            dropout=config.dropout,\n                            window_size=config.window_size,\n                        )\n                    ),\n                    Residual(\n                        FeedForward(\n                            dim=block_channels_out,\n                            dropout=config.dropout,\n                        )\n                    ),\n                    Rearrange(\"b x y w1 w2 d -> b d (x w1) (y w2)\"),\n                    Rearrange(\n                        \"b d (w1 x) (w2 y) -> b x y w1 w2 d\",",
+        "type": "code",
+        "location": "/rtx/rtx1.py:470-493"
+    },
+    "87": {
+        "file_id": 10,
+        "content": "This code section is creating a block of a neural network. It includes various layers like Conv, Rearrange, Residual, Attention, and FeedForward. The layers are configured with specific parameters like shrinkage rate, window size, block channels out, dim head, dropout, etc., taken from the config file. The code rearranges the dimensions of input tensors as needed for different operations within the block.",
+        "type": "comment"
+    },
+    "88": {
+        "file_id": 10,
+        "content": "                        w1=config.window_size,\n                        w2=config.window_size,\n                    ),  # grid-like attention\n                    Residual(\n                        Attention(\n                            dim=block_channels_out,\n                            dim_head=config.dim_head,\n                            dropout=config.dropout,\n                            window_size=config.window_size,\n                        )\n                    ),\n                    Residual(\n                        FeedForward(\n                            dim=block_channels_out,\n                            dropout=config.dropout,\n                        )\n                    ),\n                    Rearrange(\"b x y w1 w2 d -> b d (w1 x) (w2 y)\"),\n                )\n                self.layers.append(layer)\n        # mlp head out\n        self.mlp_head = nn.Sequential(\n            Reduce(\"b d h w -> b d\", \"mean\"),\n            LayerNorm(self.embed_dim),\n            nn.Linear(self.embed_dim, config.num_classes, bias=False),",
+        "type": "code",
+        "location": "/rtx/rtx1.py:494-521"
+    },
+    "89": {
+        "file_id": 10,
+        "content": "The code defines a Transformer block with grid-like attention, followed by residual connections and feedforward layers. It then appends the block to 'self.layers' and creates an MLP head for classification using Reduce, LayerNorm, and Linear layers.",
+        "type": "comment"
+    },
+    "90": {
+        "file_id": 10,
+        "content": "        )\n    @beartype\n    def forward(\n        self,\n        x,\n        texts: Optional[List[str]] = None,\n        cond_fns: Optional[Tuple[Callable, ...]] = None,\n        cond_drop_prob=0.0,\n        return_embeddings=False,\n    ):\n        x = self.conv_stem(x)\n        cond_fns = iter(default(cond_fns, []))\n        for stage in self.layers:\n            cond_fn = next(cond_fns, None)\n            if exists(cond_fn):\n                x = cond_fn(x)\n            x = stage(x)\n        if return_embeddings:\n            return x\n        return self.mlp_head(x)\n# attention\nclass TransformerAttention(nn.Module):\n    def __init__(\n        self,\n        dim,\n        causal=False,\n        dim_head=64,\n        dim_context=None,\n        heads=8,\n        norm_context=False,\n        dropout=0.1,\n    ):\n        super().__init__()\n        self.heads = heads\n        self.scale = dim_head**-0.5\n        self.causal = causal\n        inner_dim = dim_head * heads\n        dim_context = default(dim_context, dim)\n        self.norm = LayerNorm(dim)\n        self.context_norm = (",
+        "type": "code",
+        "location": "/rtx/rtx1.py:522-574"
+    },
+    "91": {
+        "file_id": 10,
+        "content": "The function \"forward\" takes input 'x', optional texts, conditional functions, and other parameters. It applies convolutional layers followed by a Transformer attention module to process the input data. The function returns either the output or embeddings depending on the return_embeddings parameter.\n\nThe \"TransformerAttention\" class initializes an attention module with specified dimensions, number of heads, dropout rate, etc. It applies layer normalization and optionally normalizes the context dimension as well.",
+        "type": "comment"
+    },
+    "92": {
+        "file_id": 10,
+        "content": "            LayerNorm(dim_context) if norm_context else nn.Identity()\n        )\n        self.attn_dropout = nn.Dropout(dropout)\n        self.to_q = nn.Linear(dim, inner_dim, bias=False)\n        self.to_kv = nn.Linear(dim_context, dim_head * 2, bias=False)\n        self.to_out = nn.Sequential(\n            nn.Linear(inner_dim, dim, bias=False), nn.Dropout(dropout)\n        )\n    def forward(\n        self,\n        x,\n        context=None,\n        mask=None,\n        attn_bias=None,\n        attn_mask=None,\n        cond_fn: Optional[Callable] = None,\n    ):\n        x.shape[0]\n        if exists(context):\n            context = self.context_norm(context)\n        kv_input = default(context, x)\n        x = self.norm(x)\n        if exists(cond_fn):\n            # adaptive layer-norm\n            x = cond_fn(x)\n        q, k, v = self.to_q(x), *self.to_kv(kv_input).chunk(2, dim=-1)\n        q = rearrange(q, \"b n (h d) -> b h n d\", h=self.heads)\n        q = q * self.scale\n        sim = einsum(\"b h i d, b j d -> b h i j\", q, k)\n        if exists(attn_bias):",
+        "type": "code",
+        "location": "/rtx/rtx1.py:575-616"
+    },
+    "93": {
+        "file_id": 10,
+        "content": "This code initializes a Multi-Head Attention layer. It includes LayerNorm for normalization, nn.Linear for transformations, and nn.Sequential for sequential operations. The forward function applies the attention mechanism to input 'x' and optionally context, considering masking and conditional functions if provided.",
+        "type": "comment"
+    },
+    "94": {
+        "file_id": 10,
+        "content": "            sim = sim + attn_bias\n        if exists(attn_mask):\n            sim = sim.masked_fill(\n                ~attn_mask, -torch.finfo(sim.dtype).max\n            )\n        if exists(mask):\n            mask = rearrange(mask, \"b j -> b 1 1 j\")\n            sim = sim.masked_fill(~mask, -torch.finfo(sim.dtype).max)\n        if self.causal:\n            i, j = sim.shape[-2:]\n            causal_mask = torch.ones(\n                (i, j), dtype=torch.bool, device=x.device\n            ).triu(j - i + 1)\n            sim = sim.masked_fill(\n                causal_mask, -torch.finfo(sim.dtype).max\n            )\n        attn = sim.softmax(dim=-1)\n        attn = self.attn_dropout(attn)\n        out = einsum(\"b h i j, b j d -> b h i d\", attn, v)\n        out = rearrange(out, \"b h n d -> b n (h d)\")\n        return self.to_out(out)\n@beartype\nclass Transformer(nn.Module):\n    def __init__(\n        self,\n        dim,\n        dim_head=64,\n        heads=8,\n        depth=6,\n        attn_dropout=0.0,\n        ff_dropout=0.0,\n    ):\n        super().__init__()",
+        "type": "code",
+        "location": "/rtx/rtx1.py:617-657"
+    },
+    "95": {
+        "file_id": 10,
+        "content": "The code defines a Transformer class that takes in various dimensions and parameters for the attention mechanism. It applies an attentional mask to control the flow of information, applies causal masking for sequence modeling tasks, performs multi-head self-attention, and includes dropout regularization. The resulting output is then passed through a linear layer to get the final output.",
+        "type": "comment"
+    },
+    "96": {
+        "file_id": 10,
+        "content": "        self.layers = nn.ModuleList([])\n        for _ in range(depth):\n            self.layers.append(\n                nn.ModuleList(\n                    [\n                        TransformerAttention(\n                            dim=dim, heads=heads, dropout=attn_dropout\n                        ),\n                        FeedForward(dim=dim, dropout=ff_dropout),\n                    ]\n                )\n            )\n    def forward(\n        self,\n        x,\n        cond_fns: Optional[Tuple[Callable, ...]] = None,\n        attn_mask=None,\n    ):\n        cond_fns = iter(default(cond_fns, []))\n        for attn, ff in self.layers:\n            x = (\n                attn(\n                    x,\n                    attn_mask=attn_mask,\n                    cond_fn=next(cond_fns, None),\n                )\n                + x\n            )\n            x = ff(x, cond_fn=next(cond_fns, None)) + x\n        return x\n# token learner module\nclass TokenLearner(nn.Module):\n    \"\"\"\n    https://arxiv.org/abs/2106.11297\n    using the 1.1 version with the MLP (2 dense layers with gelu) for generating attention map",
+        "type": "code",
+        "location": "/rtx/rtx1.py:658-698"
+    },
+    "97": {
+        "file_id": 10,
+        "content": "The code defines a class called `RTX` which appears to be a transformer network layer. It has a method `forward()` that takes input `x`, optional condition functions `cond_fns`, and an attention mask `attn_mask`. The `forward()` method applies the attention and feed-forward layers sequentially, adding the output to the input. There's also a class called `TokenLearner` which may be used for generating attention maps.",
+        "type": "comment"
+    },
+    "98": {
+        "file_id": 10,
+        "content": "    \"\"\"\n    def __init__(\n        self, *, dim, ff_mult=2, num_output_tokens=8, num_layers=2\n    ):\n        super().__init__()\n        inner_dim = dim * ff_mult * num_output_tokens\n        self.num_output_tokens = num_output_tokens\n        self.net = nn.Sequential(\n            nn.Conv2d(\n                dim * num_output_tokens,\n                inner_dim,\n                1,\n                groups=num_output_tokens,\n            ),\n            nn.GELU(),\n            nn.Conv2d(\n                inner_dim,\n                num_output_tokens,\n                1,\n                groups=num_output_tokens,\n            ),\n        )\n    def forward(self, x):\n        x, ps = pack_one(x, \"* c h w\")\n        x = repeat(\n            x, \"b c h w -> b (g c) h w\", g=self.num_output_tokens\n        )\n        attn = self.net(x)\n        attn = rearrange(attn, \"b g h w -> b 1 g h w\")\n        x = rearrange(\n            x, \"b (g c) h w -> b c g h w\", g=self.num_output_tokens\n        )\n        x = reduce(x * attn, \"b c g h w -> b c g\", \"mean\")\n        x = unpack_one(x, ps, \"* c n\")",
+        "type": "code",
+        "location": "/rtx/rtx1.py:699-737"
+    },
+    "99": {
+        "file_id": 10,
+        "content": "This code defines a class that initializes an RTX network with given dimensions, feature scaling factor, number of output tokens, and layers. It utilizes convolutional layers and GELU activation for the network architecture. The forward function performs operations on input data to compute output for the network.",
+        "type": "comment"
+    }
+}

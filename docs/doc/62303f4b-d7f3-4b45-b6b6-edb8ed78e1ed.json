@@ -1,0 +1,10 @@
+{
+    "summary": "This code imports the EfficientNetFilm model from the rtx package and instantiates an instance of it with the \"efficientnet-b0\" name and a target size of 10. The model is then used to process an image named \"img.jpeg\", and the result is stored in the variable out.",
+    "details": [
+        {
+            "comment": "This code imports the EfficientNetFilm model from the rtx package and instantiates an instance of it with the \"efficientnet-b0\" name and a target size of 10. The model is then used to process an image named \"img.jpeg\", and the result is stored in the variable out.",
+            "location": "\"/media/root/Prima/works/RT-X/docs/src/efficient_net_example.py\":0-4",
+            "content": "from rtx.efficient_net import EfficientNetFilm\nmodel = EfficientNetFilm(\"efficientnet-b0\", 10)\nout = model(\"img.jpeg\")"
+        }
+    ]
+}

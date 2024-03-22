@@ -1,0 +1,65 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "rtx-torch"
+version = "0.1.0"
+description = "rtx - Pytorch"
+license = "MIT"
+authors = ["Kye Gomez <kye@apac.ai>"]
+homepage = "https://github.com/kyegomez/rt-x"
+documentation = "https://github.com/kyegomez/rt-x"  # Replace if you have documentation.
+readme = "README.md"  # Assuming you have a README.md
+repository = "https://github.com/kyegomez/rtx"
+keywords = ["artificial intelligence", "deep learning", "optimizers", "Prompt Engineering"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.6"
+]
+packages = [
+    { include = "rtx" },
+    { include = "rtx/**/*.py" },
+]
+
+
+[tool.poetry.dependencies]
+python = "^3.8"
+torch = "*"
+einops = "*"
+efficientnet_pytorch = "*"
+zetascale = "0.9.9"
+torchvision = "*"
+classifier-free-guidance-pytorch = "*"
+
+
+
+[tool.poetry.group.lint.dependencies]
+ruff = ">=0.0.249,<0.1.10"
+types-toml = "^0.10.8.1"
+types-redis = "^4.3.21.6"
+types-pytz = "^2023.3.0.0"
+black = "^23.1.0"
+types-chardet = "^5.0.4.6"
+mypy-protobuf = "^3.0.0"
+
+
+[tool.autopep8]
+max_line_length = 70
+ignore = "E501,W6"  # or ["E501", "W6"]
+in-place = true
+recursive = true
+aggressive = 3
+
+[tool.ruff]
+line-length = 70
+
+[tool.black]
+line-length = 70
+target-version = ['py38']
+preview = true
+
+

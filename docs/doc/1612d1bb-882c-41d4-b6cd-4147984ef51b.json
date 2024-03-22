@@ -1,0 +1,15 @@
+{
+    "summary": "This code configures a Poetry package for \"rtx-torch\" with dependencies, including PyTorch and EfficientNet PyTorch. It also sets up project linting, formatting, and type checking with Ruff and Black, targeting Python 3.8.",
+    "details": [
+        {
+            "comment": "This code is a Poetry configuration for the \"rtx-torch\" package. It specifies the build system, package details, dependencies, and classifiers. The package uses Python 3.8 or higher, PyTorch, Einops, EfficientNet PyTorch, ZetaScale, Torchvision, and Classifier-free Guidance PyTorch. The repository is located at \"https://github.com/kyegomez/rtx\".",
+            "location": "\"/media/root/Prima/works/RT-X/docs/src/pyproject.toml\":0-35",
+            "content": "[build-system]\nrequires = [\"poetry-core>=1.0.0\"]\nbuild-backend = \"poetry.core.masonry.api\"\n[tool.poetry]\nname = \"rtx-torch\"\nversion = \"0.1.0\"\ndescription = \"rtx - Pytorch\"\nlicense = \"MIT\"\nauthors = [\"Kye Gomez <kye@apac.ai>\"]\nhomepage = \"https://github.com/kyegomez/rt-x\"\ndocumentation = \"https://github.com/kyegomez/rt-x\"  # Replace if you have documentation.\nreadme = \"README.md\"  # Assuming you have a README.md\nrepository = \"https://github.com/kyegomez/rtx\"\nkeywords = [\"artificial intelligence\", \"deep learning\", \"optimizers\", \"Prompt Engineering\"]\nclassifiers = [\n    \"Development Status :: 4 - Beta\",\n    \"Intended Audience :: Developers\",\n    \"Topic :: Scientific/Engineering :: Artificial Intelligence\",\n    \"License :: OSI Approved :: MIT License\",\n    \"Programming Language :: Python :: 3.6\"\n]\npackages = [\n    { include = \"rtx\" },\n    { include = \"rtx/**/*.py\" },\n]\n[tool.poetry.dependencies]\npython = \"^3.8\"\ntorch = \"*\"\neinops = \"*\"\nefficientnet_pytorch = \"*\"\nzetascale = \"0.9.9\"\ntorchvision = \"*\"\nclassifier-free-guidance-pytorch = \"*\""
+        },
+        {
+            "comment": "This code configures various tools for Python project linting, formatting, and type checking. It specifies dependencies for linting with Ruff, sets a line length of 70 characters, and uses Black for formatting with a target version of Python 3.8.",
+            "location": "\"/media/root/Prima/works/RT-X/docs/src/pyproject.toml\":39-62",
+            "content": "[tool.poetry.group.lint.dependencies]\nruff = \">=0.0.249,<0.1.10\"\ntypes-toml = \"^0.10.8.1\"\ntypes-redis = \"^4.3.21.6\"\ntypes-pytz = \"^2023.3.0.0\"\nblack = \"^23.1.0\"\ntypes-chardet = \"^5.0.4.6\"\nmypy-protobuf = \"^3.0.0\"\n[tool.autopep8]\nmax_line_length = 70\nignore = \"E501,W6\"  # or [\"E501\", \"W6\"]\nin-place = true\nrecursive = true\naggressive = 3\n[tool.ruff]\nline-length = 70\n[tool.black]\nline-length = 70\ntarget-version = ['py38']\npreview = true"
+        }
+    ]
+}
