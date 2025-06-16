@@ -1,7 +1,7 @@
 torch
 torchvision
 torch-tb-profiler==0.4.3
-tensorboardx==2.6.2.2
+tensorboardx==2.6.4
 tensorboard==2.16.2
 olefile==0.47
 einops==0.7.0
